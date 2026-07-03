@@ -2,12 +2,14 @@ import { Helmet } from 'react-helmet-async';
 import { HiOutlineArrowsPointingOut, HiOutlineBookmark, HiOutlineSpeakerWave } from 'react-icons/hi2';
 import { Link, useParams } from 'react-router-dom';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
+import { getLocalizedNarrationText } from '@/audio/localizedNarration';
 import { useNarration } from '@/audio/useNarration';
 import { MuseumButton } from '@/buttons/MuseumButton';
 import { GlassCard } from '@/cards/GlassCard';
 import { ArtworkVisual } from '@/common/ArtworkVisual';
+import { MuseumSelect } from '@/common/MuseumSelect';
 import { ArtworkViewerDialog } from '@/dialogs/ArtworkViewerDialog';
 import { useArtwork, useMuseumOverview } from '@/hooks/useMuseumData';
 import { useFavoritesStore } from '@/store/favoritesStore';
@@ -19,7 +21,8 @@ export function PaintingPage() {
   const { favoriteIds, toggleFavorite } = useFavoritesStore();
   const [language, setLanguage] = useState('en-US');
   const [viewerOpen, setViewerOpen] = useState(false);
-  const narration = useNarration({ text: artwork?.audioScript ?? '', language });
+  const narrationText = useMemo(() => getLocalizedNarrationText(artwork, language), [artwork, language]);
+  const narration = useNarration({ text: narrationText, language });
 
   const relatedArtworks = overview?.artworks.filter((entry) => artwork?.relatedIds.includes(entry.id)) ?? [];
 
@@ -68,11 +71,16 @@ export function PaintingPage() {
             </div>
             <div className="mt-6 flex items-center gap-3">
               <label className="text-sm text-white/60">Narration language</label>
-              <select value={language} onChange={(event) => setLanguage(event.target.value)} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white">
-                <option value="en-US">English</option>
-                <option value="fr-FR">French</option>
-                <option value="hi-IN">Hindi</option>
-              </select>
+              <MuseumSelect
+                value={language}
+                onChange={setLanguage}
+                className="min-w-44 rounded-full border border-white/10 bg-white/5 text-sm text-white"
+                options={[
+                  { value: 'en-US', label: 'English' },
+                  { value: 'fr-FR', label: 'French' },
+                  { value: 'hi-IN', label: 'Hindi' },
+                ]}
+              />
             </div>
             {artwork.sourceUrl ? (
               <p className="mt-6 text-sm text-white/55">

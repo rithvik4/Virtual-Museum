@@ -1,4 +1,5 @@
 import type { SearchFilters } from '@/types/museum';
+import { MuseumSelect } from '@/common/MuseumSelect';
 
 type GalleryFiltersProps = {
   filters: SearchFilters;
@@ -10,7 +11,7 @@ type GalleryFiltersProps = {
 };
 
 export function GalleryFilters({ filters, periods, countries, collections, rooms, onChange }: GalleryFiltersProps) {
-  const selectClassName = 'rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none';
+  const selectClassName = 'rounded-full border border-white/10 bg-white/5 text-sm text-white';
 
   return (
     <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
@@ -20,30 +21,42 @@ export function GalleryFilters({ filters, periods, countries, collections, rooms
         placeholder="Search artwork, artist, style"
         className="rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35 xl:col-span-2"
       />
-      <select value={filters.period} onChange={(event) => onChange({ ...filters, period: event.target.value })} className={selectClassName}>
-        <option value="all">All periods</option>
-        {periods.map((period) => (
-          <option key={period} value={period}>{period}</option>
-        ))}
-      </select>
-      <select value={filters.country} onChange={(event) => onChange({ ...filters, country: event.target.value })} className={selectClassName}>
-        <option value="all">All countries</option>
-        {countries.map((country) => (
-          <option key={country} value={country}>{country}</option>
-        ))}
-      </select>
-      <select value={filters.collection} onChange={(event) => onChange({ ...filters, collection: event.target.value })} className={selectClassName}>
-        <option value="all">All collections</option>
-        {collections.map((collection) => (
-          <option key={collection} value={collection}>{collection}</option>
-        ))}
-      </select>
-      <select value={filters.roomId} onChange={(event) => onChange({ ...filters, roomId: event.target.value })} className={selectClassName}>
-        <option value="all">All rooms</option>
-        {rooms.map((room) => (
-          <option key={room.id} value={room.id}>{room.name}</option>
-        ))}
-      </select>
+      <MuseumSelect
+        value={filters.period}
+        onChange={(period) => onChange({ ...filters, period })}
+        className={selectClassName}
+        options={[
+          { value: 'all', label: 'All periods' },
+          ...periods.map((period) => ({ value: period, label: period })),
+        ]}
+      />
+      <MuseumSelect
+        value={filters.country}
+        onChange={(country) => onChange({ ...filters, country })}
+        className={selectClassName}
+        options={[
+          { value: 'all', label: 'All countries' },
+          ...countries.map((country) => ({ value: country, label: country })),
+        ]}
+      />
+      <MuseumSelect
+        value={filters.collection}
+        onChange={(collection) => onChange({ ...filters, collection })}
+        className={selectClassName}
+        options={[
+          { value: 'all', label: 'All collections' },
+          ...collections.map((collection) => ({ value: collection, label: collection })),
+        ]}
+      />
+      <MuseumSelect
+        value={filters.roomId}
+        onChange={(roomId) => onChange({ ...filters, roomId })}
+        className={selectClassName}
+        options={[
+          { value: 'all', label: 'All rooms' },
+          ...rooms.map((room) => ({ value: room.id, label: room.name })),
+        ]}
+      />
     </div>
   );
 }

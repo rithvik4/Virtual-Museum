@@ -20,6 +20,9 @@ function RoomPortal({ room, active, position, onSelect }: { room: MuseumRoom; ac
         <Text position={[0, -2.5, 0]} color="#ffffff" fontSize={0.34} anchorX="center" anchorY="middle">
           {room.name}
         </Text>
+        <Text position={[0, 2.5, 0.26]} color="#f3f4f6" fontSize={0.24} anchorX="center" anchorY="middle" outlineColor="#090909" outlineWidth={0.02}>
+          {room.name}
+        </Text>
       </group>
     </Float>
   );

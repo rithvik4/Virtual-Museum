@@ -8,7 +8,6 @@ const navItems = [
   { to: '/gallery', label: 'Gallery' },
   { to: '/timeline', label: 'Timeline' },
   { to: '/collections', label: 'Collections' },
-  { to: '/events', label: 'Events' },
   { to: '/favorites', label: 'Favorites' },
 ];
 

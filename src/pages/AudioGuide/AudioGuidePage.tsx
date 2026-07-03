@@ -2,8 +2,10 @@ import { Helmet } from 'react-helmet-async';
 import { useMemo, useState } from 'react';
 import { HiOutlinePause, HiOutlinePlay, HiOutlineStop } from 'react-icons/hi2';
 
+import { getLocalizedNarrationText } from '@/audio/localizedNarration';
 import { useNarration } from '@/audio/useNarration';
 import { GlassCard } from '@/cards/GlassCard';
+import { MuseumSelect } from '@/common/MuseumSelect';
 import { SectionHeading } from '@/common/SectionHeading';
 import { useMuseumOverview } from '@/hooks/useMuseumData';
 
@@ -17,7 +19,8 @@ export function AudioGuidePage() {
     [data, selectedId],
   );
 
-  const narration = useNarration({ text: selectedArtwork?.audioScript ?? '', language });
+  const narrationText = useMemo(() => getLocalizedNarrationText(selectedArtwork, language), [selectedArtwork, language]);
+  const narration = useNarration({ text: narrationText, language });
 
   return (
     <>
@@ -52,18 +55,23 @@ export function AudioGuidePage() {
             <h2 className="mt-4 font-display text-4xl text-white">{selectedArtwork?.title}</h2>
             <p className="mt-3 text-sm uppercase tracking-[0.18em] text-white/55">{selectedArtwork?.artist}</p>
             <p className="mt-6 rounded-[1.5rem] border border-white/10 bg-white/5 p-5 text-lg leading-8 text-white/68">
-              {selectedArtwork?.audioScript}
+              {narrationText}
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <button type="button" onClick={narration.play} className="rounded-full bg-museum-gold p-3 text-black"><HiOutlinePlay /></button>
               <button type="button" onClick={narration.pause} className="rounded-full border border-white/10 bg-white/5 p-3 text-white"><HiOutlinePause /></button>
               <button type="button" onClick={narration.stop} className="rounded-full border border-white/10 bg-white/5 p-3 text-white"><HiOutlineStop /></button>
-              <select value={language} onChange={(event) => setLanguage(event.target.value)} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white">
-                <option value="en-US">English</option>
-                <option value="fr-FR">French</option>
-                <option value="hi-IN">Hindi</option>
-                <option value="ar-SA">Arabic</option>
-              </select>
+              <MuseumSelect
+                value={language}
+                onChange={setLanguage}
+                className="min-w-40 rounded-full border border-white/10 bg-white/5 text-sm text-white"
+                options={[
+                  { value: 'en-US', label: 'English' },
+                  { value: 'fr-FR', label: 'French' },
+                  { value: 'hi-IN', label: 'Hindi' },
+                  { value: 'ar-SA', label: 'Arabic' },
+                ]}
+              />
               <input type="range" min="0.75" max="1.5" step="0.05" value={narration.rate} onChange={(event) => narration.setRate(Number(event.target.value))} />
             </div>
             <p className="mt-5 text-sm text-white/58">Captions are shown directly in the transcription panel above. Background ambience and produced voice tracks can be swapped in later without changing the UI contract.</p>

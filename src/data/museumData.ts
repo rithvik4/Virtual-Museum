@@ -104,9 +104,261 @@ const artists: Artist[] = [
     biography: 'A speculative digital artist combining procedural systems with cultural cartography.',
     specialties: ['creative coding', 'real-time rendering', 'interactive installation'],
   },
+  {
+    id: 'asha-raina',
+    name: 'Asha Raina',
+    country: 'India',
+    period: 'Ancient',
+    biography: 'A fictional painter of temple panels, floral studies, and devotional ornament drawn from Indian visual traditions.',
+    specialties: ['pichhwai', 'temple painting', 'ornament'],
+  },
+  {
+    id: 'devika-sen',
+    name: 'Devika Sen',
+    country: 'India',
+    period: 'Medieval',
+    biography: 'A fictional manuscript artist focused on courtly narrative, paper luminosity, and regional linework.',
+    specialties: ['manuscript painting', 'miniature', 'ink and gold'],
+  },
+  {
+    id: 'kabir-rai',
+    name: 'Kabir Rai',
+    country: 'India',
+    period: 'Modern',
+    biography: 'A fictional modern Indian colorist working between textile memory, city rhythm, and formal abstraction.',
+    specialties: ['textile studies', 'urban color', 'mixed media'],
+  },
+  {
+    id: 'meera-iyer',
+    name: 'Meera Iyer',
+    country: 'India',
+    period: 'Contemporary',
+    biography: 'A fictional contemporary artist whose work explores memory, ritual, and digital ornament.',
+    specialties: ['contemporary painting', 'pattern studies', 'digital ornament'],
+  },
 ];
 
-const artworks: Artwork[] = [
+const indianArtists = artists.filter((artist) => artist.country === 'India');
+
+type IndianArtworkRecord = {
+  id: number;
+  title: string;
+  artist: string;
+  year: string;
+  country: string;
+  culture: string;
+  medium: string;
+  classification: string;
+  period: string;
+  imageUrl: string;
+  sourceUrl: string;
+};
+
+function cleanText(value: string) {
+  return value.replace(/\s+/g, ' ').trim();
+}
+
+function formatArtworkNarration(artwork: {
+  title: string;
+  artist: string;
+  year: string;
+  style: string;
+  medium: string;
+  roomId: string;
+  historicalImportance: string;
+}, index: number) {
+  const roomLabel = rooms.find((room) => room.id === artwork.roomId)?.name ?? artwork.roomId;
+  const openers = [
+    `Now viewing ${artwork.title}.`,
+    `${artwork.title} invites a closer look.`,
+    `This is ${artwork.title}.`,
+    `Focus on ${artwork.title}.`,
+  ];
+  const opener = openers[index % openers.length];
+
+  return `${opener} Created by ${artwork.artist} in ${artwork.year}, it is presented in the ${roomLabel} sequence. `
+    + `The work is classified as ${artwork.style} and uses ${artwork.medium}. `
+    + `${artwork.historicalImportance}`;
+}
+
+function makeIndianArtwork(index: number): Artwork {
+  const record = indianArtworkRecords[index % indianArtworkRecords.length];
+  const artist = indianArtists[index % indianArtists.length];
+  const roomSequence = ['egypt', 'renaissance', 'modern', 'photography', 'digital'] as const;
+  const paletteOptions: Array<[string, string]> = [
+    ['#D4AF37', '#4E3421'],
+    ['#C28C5A', '#3C2417'],
+    ['#8B5CF6', '#1E1B3A'],
+    ['#92A8D1', '#1F2937'],
+    ['#00C2A8', '#082F2E'],
+    ['#D97706', '#3B1D0A'],
+  ];
+  const palette = paletteOptions[index % paletteOptions.length];
+  const roomId = roomSequence[index % roomSequence.length];
+  const period = record.period || (index % 2 === 0 ? 'Ancient' : 'Medieval');
+  const collectionOptions = ['Featured', 'Hidden Treasures', 'Most Viewed', 'Editors Choice', 'Trending', 'Recently Added'];
+  const collection = collectionOptions[index % collectionOptions.length];
+  const imageUrl = record.imageUrl;
+  const title = cleanText(record.title);
+  const artworkArtist = cleanText(record.artist || artist.name || 'Unknown artist');
+  const country = cleanText(record.country || 'India');
+  const culture = cleanText(record.culture || 'India');
+  const style = cleanText(record.classification || 'Indian art');
+  const medium = cleanText(record.medium || 'Unknown medium');
+  const year = cleanText(record.year || 'Date unknown');
+  const totalIndian = indianArtworkRecords.length;
+  const relatedIds = [
+    `indian-${((index + 1) % totalIndian) + 1}`,
+    `indian-${((index + 2) % totalIndian) + 1}`,
+  ];
+  const historicalImportance = `${title} reflects ${culture} visual traditions and broadens the museum's South Asian representation with a documented work from The Met.`;
+  const description = `${title} is a documented object from The Metropolitan Museum of Art collection, included to strengthen Indian art coverage with accurate object metadata.`;
+  const narration = formatArtworkNarration(
+    {
+      title,
+      artist: artworkArtist,
+      year,
+      style,
+      medium,
+      roomId,
+      historicalImportance,
+    },
+    index,
+  );
+
+  return {
+    id: `indian-${index + 1}`,
+    slug: `indian-${index + 1}`,
+    title,
+    imageUrl,
+    thumbnailUrl: imageUrl,
+    artistId: artist.id,
+    artist: artworkArtist,
+    year,
+    country,
+    period,
+    style,
+    roomId,
+    collection,
+    description,
+    historicalImportance,
+    technique: style,
+    medium,
+    dimensions: 'Dimensions not specified',
+    location: `Met Collection (Object ${record.id})`,
+    audioScript: narration,
+    relatedIds,
+    annotations: [
+      { id: `indian-${index + 1}-1`, title: 'Source note', body: `Met object ${record.id} metadata is mapped directly to this card.` },
+      { id: `indian-${index + 1}-2`, title: 'Culture note', body: `Culture: ${culture}. Classification: ${style}.` },
+    ],
+    facts: [
+      { label: 'Object ID', value: String(record.id) },
+      { label: 'Culture', value: culture },
+      { label: 'Artist', value: artworkArtist },
+      { label: 'Medium', value: medium },
+    ],
+    palette,
+    popularity: 70 + (index % 25),
+    spotlight: index < 6,
+    sourceName: 'The Metropolitan Museum of Art',
+    sourceUrl: record.sourceUrl,
+    isPublicDomain: true,
+  };
+}
+
+function makeGeneratedArtwork(index: number, priorIds: string[]): Artwork {
+  const roomPalette: Record<string, [string, string]> = {
+    egypt: ['#D4AF37', '#4E3421'],
+    renaissance: ['#C28C5A', '#3C2417'],
+    modern: ['#8B5CF6', '#1E1B3A'],
+    photography: ['#92A8D1', '#1F2937'],
+    digital: ['#00C2A8', '#082F2E'],
+  };
+
+  const roomSequence = ['egypt', 'renaissance', 'modern', 'photography', 'digital'] as const;
+  const artistSequence = artists.map((artist) => artist.id);
+  const roomId = roomSequence[index % roomSequence.length];
+  const artist = artists[index % artistSequence.length];
+  const palette = roomPalette[roomId];
+  const titlePrefixes = ['Silent', 'Velvet', 'Radiant', 'Hidden', 'Nocturne', 'Golden', 'Liminal', 'Cobalt', 'Archive', 'Echo'];
+  const titleNouns = ['Field', 'Vault', 'Study', 'Portal', 'Ledger', 'Frame', 'Glyph', 'Window', 'Signal', 'Ritual'];
+  const title = `${titlePrefixes[index % titlePrefixes.length]} ${titleNouns[Math.floor(index / titlePrefixes.length) % titleNouns.length]} ${index + 1}`;
+  const year = roomId === 'egypt' ? `${1350 + index} BCE` : roomId === 'renaissance' ? `${1500 + index}` : roomId === 'modern' ? `${1900 + index}` : roomId === 'photography' ? `${1860 + index}` : `${2020 + index}`;
+  const collectionOptions = ['Featured', 'Trending', 'Hidden Treasures', 'Most Viewed', 'Editors Choice', 'VR Collection'];
+  const collection = collectionOptions[index % collectionOptions.length];
+  const styleOptions = {
+    egypt: ['Ceremonial relief', 'Temple fragment', 'Ritual figure', 'Glyph tablet'],
+    renaissance: ['Portrait study', 'Perspective panel', 'Devotional painting', 'Architectural scene'],
+    modern: ['Chromatic abstraction', 'Layered modernist study', 'Atmospheric canvas', 'Color field'],
+    photography: ['Archival photograph', 'Street observation', 'Silver gelatin print', 'Documentary frame'],
+    digital: ['Generative composition', 'Spatial projection', 'Data sculpture', 'Reactive installation'],
+  };
+  const style = styleOptions[roomId][index % styleOptions[roomId].length];
+  const mediumOptions = {
+    egypt: ['Pigment and gold leaf', 'Carved digital relief', 'Temple facsimile', 'Ceremonial mixed media'],
+    renaissance: ['Oil on panel simulation', 'Tempera-inspired surface', 'Glazed portrait treatment', 'Perspective study print'],
+    modern: ['Oil and pigment texture', 'Mixed media abstraction', 'Canvas simulation', 'Brushwork composite'],
+    photography: ['Archival photographic print', 'Gelatin silver emulation', 'Documentary capture', 'Paper negative study'],
+    digital: ['Procedural rendering', 'Projection mapping', 'Responsive light field', 'Data-driven spatial media'],
+  };
+  const medium = mediumOptions[roomId][index % mediumOptions[roomId].length];
+  const description = `${title} extends the ${roomId} room with a new public-facing image built for slow viewing and digital discovery.`;
+  const historicalImportance = `This work broadens the museum from ${artist.name}'s perspective, balancing visual rhythm, material presence, and historical storytelling.`;
+  const relatedIds = priorIds.slice(-2);
+  const imageUrl = artworkImagePool[index + baseArtworks.length];
+  const audioScript = formatArtworkNarration(
+    {
+      title,
+      artist: artist.name,
+      year,
+      style,
+      medium,
+      roomId,
+      historicalImportance,
+    },
+    index,
+  );
+
+  return {
+    id: `studio-generated-${index + 1}`,
+    slug: `studio-generated-${index + 1}`,
+    title,
+    imageUrl,
+    thumbnailUrl: imageUrl,
+    artistId: artist.id,
+    artist: artist.name,
+    year,
+    country: artist.country,
+    period: artist.period,
+    style,
+    roomId,
+    collection,
+    description,
+    historicalImportance,
+    technique: style,
+    medium,
+    dimensions: '120 x 150 cm',
+    location: `${artist.country} Gallery ${index + 1}`,
+    audioScript,
+    relatedIds,
+    annotations: [
+      { id: `generated-${index + 1}-1`, title: 'Surface note', body: 'This generated image keeps the gallery visually full even when external APIs are unavailable.' },
+      { id: `generated-${index + 1}-2`, title: 'Curation note', body: 'The work is aligned to the museum room system so filters and routes still feel coherent.' },
+    ],
+    facts: [
+      { label: 'Room', value: roomId },
+      { label: 'Collection', value: collection },
+      { label: 'Artist', value: artist.name },
+      { label: 'Count', value: String(index + 1) },
+    ],
+    palette,
+    popularity: 60 + (index % 35),
+    spotlight: index % 9 === 0,
+  };
+}
+
+const baseArtworks: Artwork[] = [
   {
     id: 'sun-mask',
     slug: 'sun-mask-of-nefer',
@@ -385,6 +637,443 @@ const artworks: Artwork[] = [
     popularity: 95,
     spotlight: true,
   },
+];
+
+const artworkImagePool = [
+  'https://images.metmuseum.org/CRDImages/gr/web-large/DP-31265-001.jpg',
+  'https://images.metmuseum.org/CRDImages/is/web-large/DP221332.jpg',
+  'https://images.metmuseum.org/CRDImages/as/web-large/DP156677.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-25975-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT375.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP145921.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-25460-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-43276-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT1565.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP346474.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP346475.jpg',
+  'https://images.metmuseum.org/CRDImages/ph/web-large/DT1120.jpg',
+  'https://images.metmuseum.org/CRDImages/ph/web-large/37.14.10.jpg',
+  'https://images.metmuseum.org/CRDImages/as/web-large/DP141042.jpg',
+  'https://images.metmuseum.org/CRDImages/as/web-large/DP143415.jpg',
+  'https://images.metmuseum.org/CRDImages/as/web-large/DP146852.jpg',
+  'https://images.metmuseum.org/CRDImages/as/web-large/DP130176.jpg',
+  'https://images.metmuseum.org/CRDImages/as/web-large/DP146902.jpg',
+  'https://images.metmuseum.org/CRDImages/as/web-large/JP 3228.JPG',
+  'https://images.metmuseum.org/CRDImages/as/web-large/JP 3229.JPG',
+  'https://images.metmuseum.org/CRDImages/as/web-large/DP143060.jpg',
+  'https://images.metmuseum.org/CRDImages/md/web-large/DP155528.jpg',
+  'https://images.metmuseum.org/CRDImages/aa/web-large/LC-1970_77-001.jpg',
+  'https://images.metmuseum.org/CRDImages/md/web-large/DT154.jpg',
+  'https://images.metmuseum.org/CRDImages/ao/web-large/DT1269.jpg',
+  'https://images.metmuseum.org/CRDImages/mi/web-large/DP229625.jpg',
+  'https://images.metmuseum.org/CRDImages/ci/web-large/DP-30816-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ao/web-large/DP-39316-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ao/web-large/DP-21885-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ao/web-large/DP107700.jpg',
+  'https://images.metmuseum.org/CRDImages/ao/web-large/TP412.jpg',
+  'https://images.metmuseum.org/CRDImages/ao/web-large/77991.jpg',
+  'https://images.metmuseum.org/CRDImages/mi/web-large/DP321283.jpg',
+  'https://images.metmuseum.org/CRDImages/as/web-large/DP146861.jpg',
+  'https://images.metmuseum.org/CRDImages/mi/web-large/DP148476.jpg',
+  'https://images.metmuseum.org/CRDImages/is/web-large/sf1982-476-2r.jpg',
+  'https://images.metmuseum.org/CRDImages/as/web-large/DT6940.jpg',
+  'https://images.metmuseum.org/CRDImages/is/web-large/DT4836.jpg',
+  'https://images.metmuseum.org/CRDImages/aa/web-large/DP157706.jpg',
+  'https://images.metmuseum.org/CRDImages/aa/web-large/DP158306.jpg',
+  'https://images.metmuseum.org/CRDImages/is/web-large/DP234078.jpg',
+  'https://images.metmuseum.org/CRDImages/aa/web-large/DP701277.jpg',
+  'https://images.metmuseum.org/CRDImages/is/web-large/DT4784.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-17408-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-23236-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-17680-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-15681-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT887.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT1973.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT1965.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT1963.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT1958.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP302937.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP302942.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/EP1059.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-14936-031.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP290289.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT1961.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT1975.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT1960.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT1962.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-1275-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT1968.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP302935.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-24650-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP124050.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT1964.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT2147.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP161261.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT373.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-43909-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP164824.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP164825.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT1298.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-31245-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-44525-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-20399-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP368622.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT1051.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-19629-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT255392.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT279163.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/41.100.8.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-23269-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP313620.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP368117a.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-24118-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP-19581-001.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT242200.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/ep32.100.79.bw.R.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DP102282.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/SF DT1049.jpg',
+  'https://images.metmuseum.org/CRDImages/ep/web-large/DT224782.jpg',
+];
+
+const indianArtworkRecords: IndianArtworkRecord[] = [
+  {
+    id: 38133,
+    title: 'Enthroned Vishnu',
+    artist: '',
+    year: 'second half of the 8th-early 9th century',
+    country: 'India',
+    culture: 'India',
+    medium: 'Granulite',
+    classification: 'Sculpture',
+    period: 'Pandyan period (early 4th-13th century)',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DT5240.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38133',
+  },
+  {
+    id: 38152,
+    title: 'Chamunda, the Horrific Destroyer of Evil',
+    artist: '',
+    year: '10th-11th century',
+    country: 'India',
+    culture: 'India',
+    medium: 'Sandstone',
+    classification: 'Sculpture',
+    period: '',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DT5234.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38152',
+  },
+  {
+    id: 38517,
+    title: 'Standing Vishnu as Keshava',
+    artist: 'Dasoja of Balligrama',
+    year: 'first quarter of the 12th century',
+    country: 'India',
+    culture: 'India (Karnataka, probably Belur)',
+    medium: 'Stone',
+    classification: 'Sculpture',
+    period: 'Hoysala period',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DT5252.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38517',
+  },
+  {
+    id: 38198,
+    title: 'Standing Buddha Offering Protection',
+    artist: '',
+    year: 'late 5th century',
+    country: 'India',
+    culture: 'India (Uttar Pradesh, Mathura)',
+    medium: 'Red sandstone',
+    classification: 'Sculpture',
+    period: 'Gupta period (4th-6th century)',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DT237.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38198',
+  },
+  {
+    id: 38379,
+    title: 'Tree Spirit Deity (Yakshi)',
+    artist: '',
+    year: '1st-2nd century',
+    country: 'India',
+    culture: 'India (Uttar Pradesh, Mathura region)',
+    medium: 'Red sandstone',
+    classification: 'Sculpture',
+    period: '',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DP251641.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38379',
+  },
+  {
+    id: 38634,
+    title: 'Crowned Bodhisattva',
+    artist: '',
+    year: '3rd-early 4th century',
+    country: 'India',
+    culture: 'North India (Uttar Pradesh, Mathura)',
+    medium: 'Sandstone',
+    classification: 'Sculpture',
+    period: 'late Kushan dynasty',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DP701395.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38634',
+  },
+  {
+    id: 38250,
+    title: 'Linga with Face of Shiva (Ekamukhalinga)',
+    artist: '',
+    year: '7th century',
+    country: 'India',
+    culture: 'India (Jammu and Kashmir, ancient kingdom of Kashmir)',
+    medium: 'Stone',
+    classification: 'Sculpture',
+    period: '',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DT6118.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38250',
+  },
+  {
+    id: 38239,
+    title: 'Drum panel with scenes of the Great Departure and Temptation of the Buddha',
+    artist: '',
+    year: 'first half 3rd century CE',
+    country: 'India',
+    culture: 'India, Nagarjunakonda, Guntur district, Andhra Pradesh',
+    medium: 'Limestone',
+    classification: 'Sculpture',
+    period: 'Ikshvaku period',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DP-18911-001.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38239',
+  },
+  {
+    id: 38515,
+    title: 'Vaikuntha Vishnu',
+    artist: '',
+    year: 'last quarter of the 8th century',
+    country: 'India',
+    culture: 'India (Jammu and Kashmir, ancient kingdom of Kashmir)',
+    medium: 'Stone',
+    classification: 'Sculpture',
+    period: '',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DT5253.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38515',
+  },
+  {
+    id: 38435,
+    title: 'Diadem with Kinnaris (Half-Bird, Half-Female Creatures)',
+    artist: '',
+    year: '9th-10th century',
+    country: 'India',
+    culture: 'India (Jammu and Kashmir, ancient kingdom of Kashmir)',
+    medium: 'Gold inset with garnet',
+    classification: 'Jewelry',
+    period: '',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DP-14791-023.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38435',
+  },
+  {
+    id: 37413,
+    title: 'Panel from a Portable Shrine: The Descent of the Buddha from Trayastrimsha Heaven',
+    artist: '',
+    year: '7th-8th century',
+    country: 'India',
+    culture: 'India (Jammu and Kashmir, ancient kingdom of Kashmir)',
+    medium: 'Ivory with traces of color',
+    classification: 'Ivories',
+    period: '',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DP267829.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/37413',
+  },
+  {
+    id: 39432,
+    title: 'Anthropomorph',
+    artist: '',
+    year: '1500-500 BCE',
+    country: 'India',
+    culture: 'India',
+    medium: 'Copper',
+    classification: 'Metalwork',
+    period: '',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DP-37034-001.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/39432',
+  },
+  {
+    id: 38141,
+    title: 'Loving Couple (Mithuna)',
+    artist: '',
+    year: '13th century',
+    country: 'India',
+    culture: 'India (Orissa)',
+    medium: 'Ferruginous stone',
+    classification: 'Sculpture',
+    period: 'Eastern Ganga dynasty',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DT241.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38141',
+  },
+  {
+    id: 38930,
+    title: 'Shiva Seated with Uma (Umamaheshvara)',
+    artist: '',
+    year: '10th century',
+    country: 'India',
+    culture: 'India (Bihar)',
+    medium: 'Bronze',
+    classification: 'Sculpture',
+    period: 'Pala period',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/1978_253_F_sf.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38930',
+  },
+  {
+    id: 75960,
+    title: 'Child Saint Sambandar',
+    artist: '',
+    year: 'late 11th century',
+    country: 'India',
+    culture: 'India, Tamil Nadu',
+    medium: 'Copper alloy',
+    classification: 'Sculpture',
+    period: 'Chola period (880-1279)',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DP234672.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/75960',
+  },
+  {
+    id: 39676,
+    title: 'One from a Pair of Ear Ornaments (Prakaravapra Kundala)',
+    artist: '',
+    year: 'ca. 1st century BCE-1st century CE',
+    country: 'India',
+    culture: 'India, Andhra Pradesh',
+    medium: 'Gold, sheet, wire and granulation',
+    classification: 'Jewelry',
+    period: 'Satavahana',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DP-14791-006.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/39676',
+  },
+  {
+    id: 38945,
+    title: 'Hanuman Conversing',
+    artist: '',
+    year: '11th century',
+    country: 'India',
+    culture: 'India (Tamil Nadu)',
+    medium: 'Copper alloy',
+    classification: 'Sculpture',
+    period: 'Chola period',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DT5250.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38945',
+  },
+  {
+    id: 38146,
+    title: 'Vishnu',
+    artist: '',
+    year: '10th-11th century',
+    country: 'India',
+    culture: 'India (Punjab)',
+    medium: 'Sandstone',
+    classification: 'Sculpture',
+    period: '',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DT5052.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38146',
+  },
+  {
+    id: 39194,
+    title: 'Vishnu Flanked by His Personified Attributes',
+    artist: '',
+    year: 'early 9th century',
+    country: 'India',
+    culture: 'India (Bihar)',
+    medium: 'Bronze',
+    classification: 'Sculpture',
+    period: 'Pala period',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DP702345.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/39194',
+  },
+  {
+    id: 39189,
+    title: 'Crowned Buddha',
+    artist: '',
+    year: '10th-11th century',
+    country: 'India',
+    culture: 'India (Bihar)',
+    medium: 'Bronze inlaid with silver, lapis lazuli, and rock crystal',
+    classification: 'Sculpture',
+    period: 'Pala period',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/16 NEW DP314094r4_61E.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/39189',
+  },
+  {
+    id: 38237,
+    title: 'Buddha',
+    artist: '',
+    year: '3rd century CE',
+    country: 'India',
+    culture: 'India, Andhra Pradesh',
+    medium: 'Limestone',
+    classification: 'Sculpture',
+    period: 'Ikshvaku period (ca. 225-ca. 320)',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DP701399.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38237',
+  },
+  {
+    id: 38518,
+    title: 'Goddess who bestows riches, probably Sri Lakshmi',
+    artist: '',
+    year: '1st century BCE',
+    country: 'India',
+    culture: 'India, Chandraketugarh, West Bengal',
+    medium: 'Molded terracotta',
+    classification: 'Sculpture',
+    period: 'Shunga',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/h1_1990.281.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38518',
+  },
+  {
+    id: 39326,
+    title: 'Standing Vishnu',
+    artist: '',
+    year: 'ca. third quarter 10th century',
+    country: 'India',
+    culture: 'India (Tamil Nadu)',
+    medium: 'Copper alloy',
+    classification: 'Metalwork',
+    period: 'Chola period (880-1279)',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DT329883.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/39326',
+  },
+  {
+    id: 38468,
+    title: 'Patravahaka yaksha',
+    artist: '',
+    year: 'ca. 50 BCE',
+    country: 'India',
+    culture: 'India, Madhya Pradesh',
+    medium: 'Sandstone',
+    classification: 'Sculpture',
+    period: 'Shunga period',
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DP-18910-001.jpg',
+    sourceUrl: 'https://www.metmuseum.org/art/collection/search/38468',
+  },
+];
+
+function generateGalleryArtworks(baseIds: string[]) {
+  const generated: Artwork[] = [];
+  const priorIds = [...baseIds];
+
+  for (let index = 0; index < 79; index += 1) {
+    const artwork = makeGeneratedArtwork(index, priorIds);
+    generated.push(artwork);
+    priorIds.push(artwork.id);
+  }
+
+  return generated;
+}
+
+const generatedArtworks = generateGalleryArtworks(baseArtworks.map((artwork) => artwork.id));
+const indianArtworks = Array.from({ length: indianArtworkRecords.length }, (_, index) => makeIndianArtwork(index));
+
+const artworks: Artwork[] = [
+  ...indianArtworks,
+  ...baseArtworks.map((artwork) => ({
+    ...artwork,
+    imageUrl: artworkImagePool[baseArtworks.indexOf(artwork)],
+    thumbnailUrl: artworkImagePool[baseArtworks.indexOf(artwork)],
+  })),
+  ...generatedArtworks,
 ];
 
 const timeline: TimelineEra[] = [

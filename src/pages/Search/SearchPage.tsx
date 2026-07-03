@@ -4,6 +4,7 @@ import { HiMiniMicrophone, HiMiniStop } from 'react-icons/hi2';
 
 import { ArtworkCard } from '@/cards/ArtworkCard';
 import { GlassCard } from '@/cards/GlassCard';
+import { MuseumSelect } from '@/common/MuseumSelect';
 import { SectionHeading } from '@/common/SectionHeading';
 import { useArtworkSearch, useMuseumOverview } from '@/hooks/useMuseumData';
 import { useVoiceSearch } from '@/hooks/useVoiceSearch';
@@ -43,30 +44,38 @@ export function SearchPage() {
                 </button>
               ) : null}
             </div>
-            <select value={filters.period} onChange={(event) => setFilters({ ...filters, period: event.target.value })} className="rounded-full border border-white/10 bg-white/5 px-4 py-3 text-white">
-              <option value="all">All periods</option>
-              {[...new Set(overview?.artworks.map((artwork) => artwork.period) ?? [])].map((period) => (
-                <option key={period} value={period}>{period}</option>
-              ))}
-            </select>
-            <select value={filters.country} onChange={(event) => setFilters({ ...filters, country: event.target.value })} className="rounded-full border border-white/10 bg-white/5 px-4 py-3 text-white">
-              <option value="all">All countries</option>
-              {[...new Set(overview?.artworks.map((artwork) => artwork.country) ?? [])].map((country) => (
-                <option key={country} value={country}>{country}</option>
-              ))}
-            </select>
-            <select value={filters.collection} onChange={(event) => setFilters({ ...filters, collection: event.target.value })} className="rounded-full border border-white/10 bg-white/5 px-4 py-3 text-white">
-              <option value="all">All collections</option>
-              {[...new Set(overview?.artworks.map((artwork) => artwork.collection) ?? [])].map((collection) => (
-                <option key={collection} value={collection}>{collection}</option>
-              ))}
-            </select>
-            <select value={filters.roomId} onChange={(event) => setFilters({ ...filters, roomId: event.target.value })} className="rounded-full border border-white/10 bg-white/5 px-4 py-3 text-white">
-              <option value="all">All rooms</option>
-              {(overview?.rooms ?? []).map((room) => (
-                <option key={room.id} value={room.id}>{room.name}</option>
-              ))}
-            </select>
+            <MuseumSelect
+              value={filters.period}
+              onChange={(period) => setFilters({ ...filters, period })}
+              options={[
+                { value: 'all', label: 'All periods' },
+                ...[...new Set(overview?.artworks.map((artwork) => artwork.period) ?? [])].map((period) => ({ value: period, label: period })),
+              ]}
+            />
+            <MuseumSelect
+              value={filters.country}
+              onChange={(country) => setFilters({ ...filters, country })}
+              options={[
+                { value: 'all', label: 'All countries' },
+                ...[...new Set(overview?.artworks.map((artwork) => artwork.country) ?? [])].map((country) => ({ value: country, label: country })),
+              ]}
+            />
+            <MuseumSelect
+              value={filters.collection}
+              onChange={(collection) => setFilters({ ...filters, collection })}
+              options={[
+                { value: 'all', label: 'All collections' },
+                ...[...new Set(overview?.artworks.map((artwork) => artwork.collection) ?? [])].map((collection) => ({ value: collection, label: collection })),
+              ]}
+            />
+            <MuseumSelect
+              value={filters.roomId}
+              onChange={(roomId) => setFilters({ ...filters, roomId })}
+              options={[
+                { value: 'all', label: 'All rooms' },
+                ...(overview?.rooms ?? []).map((room) => ({ value: room.id, label: room.name })),
+              ]}
+            />
           </div>
         </GlassCard>
         <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
