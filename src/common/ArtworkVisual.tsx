@@ -1,0 +1,29 @@
+import { cn } from '@/utils/cn';
+
+type ArtworkVisualProps = {
+  title: string;
+  artist: string;
+  palette: [string, string];
+  imageUrl?: string;
+  className?: string;
+};
+
+export function ArtworkVisual({ title, artist, palette, imageUrl, className }: ArtworkVisualProps) {
+  return (
+    <div
+      className={cn('relative overflow-hidden rounded-[1.75rem] border border-white/8', className)}
+      style={{ background: `linear-gradient(135deg, ${palette[0]}, ${palette[1]})` }}
+      aria-label={`${title} by ${artist}`}
+    >
+      {imageUrl ? (
+        <img src={imageUrl} alt={`${title} by ${artist}`} className="h-full w-full object-cover" loading="lazy" referrerPolicy="no-referrer" />
+      ) : null}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/72 via-black/18 to-transparent" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.24),transparent_0_35%),radial-gradient(circle_at_80%_30%,rgba(255,255,255,0.12),transparent_0_30%)]" />
+      <div className="absolute inset-x-8 bottom-8 rounded-[1.5rem] border border-white/15 bg-black/18 p-4 backdrop-blur-md">
+        <p className="font-display text-2xl text-white">{title}</p>
+        <p className="mt-1 text-sm uppercase tracking-[0.22em] text-white/70">{artist}</p>
+      </div>
+    </div>
+  );
+}
