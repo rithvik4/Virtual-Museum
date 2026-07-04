@@ -1,5 +1,6 @@
 import { museumOverview } from '@/data/museumData';
 import type { Artwork, MuseumOverview, SearchFilters } from '@/types/museum';
+import { getArtworkArtForm } from '@/utils/artworkArtForm';
 
 const delay = async <T>(value: T) => {
   await new Promise((resolve) => setTimeout(resolve, 120));
@@ -34,8 +35,9 @@ export async function searchArtworks(filters: SearchFilters): Promise<Artwork[]>
     const countryMatch = filters.country === 'all' || artwork.country === filters.country;
     const collectionMatch = filters.collection === 'all' || artwork.collection === filters.collection;
     const roomMatch = filters.roomId === 'all' || artwork.roomId === filters.roomId;
+    const artFormMatch = filters.artForm === 'all' || getArtworkArtForm(artwork) === filters.artForm;
 
-    return queryMatch && periodMatch && countryMatch && collectionMatch && roomMatch;
+    return queryMatch && periodMatch && countryMatch && collectionMatch && roomMatch && artFormMatch;
   });
 
   return delay(results);

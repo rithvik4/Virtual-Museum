@@ -6,19 +6,20 @@ type GalleryFiltersProps = {
   periods: string[];
   countries: string[];
   collections: string[];
+  artForms: string[];
   rooms: Array<{ id: string; name: string }>;
   onChange: (filters: SearchFilters) => void;
 };
 
-export function GalleryFilters({ filters, periods, countries, collections, rooms, onChange }: GalleryFiltersProps) {
+export function GalleryFilters({ filters, periods, countries, collections, artForms, rooms, onChange }: GalleryFiltersProps) {
   const selectClassName = 'rounded-full border border-white/10 bg-white/5 text-sm text-white';
 
   return (
-    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
       <input
         value={filters.query}
         onChange={(event) => onChange({ ...filters, query: event.target.value })}
-        placeholder="Search Indian artwork, artist, style"
+        placeholder="Search Indian artwork, artist, style, medium"
         className="rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35 xl:col-span-2"
       />
       <MuseumSelect
@@ -46,6 +47,15 @@ export function GalleryFilters({ filters, periods, countries, collections, rooms
         options={[
           { value: 'all', label: 'All collections' },
           ...collections.map((collection) => ({ value: collection, label: collection })),
+        ]}
+      />
+      <MuseumSelect
+        value={filters.artForm}
+        onChange={(artForm) => onChange({ ...filters, artForm })}
+        className={selectClassName}
+        options={[
+          { value: 'all', label: 'All forms' },
+          ...artForms.map((artForm) => ({ value: artForm, label: artForm })),
         ]}
       />
       <MuseumSelect

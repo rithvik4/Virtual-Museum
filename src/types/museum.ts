@@ -118,6 +118,7 @@ export type SearchFilters = {
   country: string;
   collection: string;
   roomId: string;
+  artForm: string;
 };
 
 export type AccessibilitySettings = {
