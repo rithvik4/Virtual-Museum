@@ -18,7 +18,7 @@ export function GalleryFilters({ filters, periods, countries, collections, rooms
       <input
         value={filters.query}
         onChange={(event) => onChange({ ...filters, query: event.target.value })}
-        placeholder="Search artwork, artist, style"
+        placeholder="Search Indian artwork, artist, style"
         className="rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35 xl:col-span-2"
       />
       <MuseumSelect
@@ -26,7 +26,7 @@ export function GalleryFilters({ filters, periods, countries, collections, rooms
         onChange={(period) => onChange({ ...filters, period })}
         className={selectClassName}
         options={[
-          { value: 'all', label: 'All periods' },
+          { value: 'all', label: 'All Indian periods' },
           ...periods.map((period) => ({ value: period, label: period })),
         ]}
       />
@@ -35,7 +35,7 @@ export function GalleryFilters({ filters, periods, countries, collections, rooms
         onChange={(country) => onChange({ ...filters, country })}
         className={selectClassName}
         options={[
-          { value: 'all', label: 'All countries' },
+          { value: 'all', label: 'All regions' },
           ...countries.map((country) => ({ value: country, label: country })),
         ]}
       />

@@ -53,7 +53,7 @@ export function MuseumScene({ rooms, activeRoomId, onSelectRoom }: MuseumScenePr
           );
         })}
         <Text position={[0, 5.8, 0]} color="#D4AF37" fontSize={0.52} anchorX="center" anchorY="middle">
-          Virtual Museum Lobby
+          Bharat Museum Lobby
         </Text>
         <OrbitControls enablePan={false} maxDistance={16} minDistance={8} maxPolarAngle={Math.PI / 2.15} minPolarAngle={Math.PI / 3.2} autoRotate autoRotateSpeed={0.4} />
       </Canvas>

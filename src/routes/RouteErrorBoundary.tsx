@@ -33,7 +33,7 @@ export class RouteErrorBoundary extends Component<RouteErrorBoundaryProps, Route
             <h1 className="mt-3 font-display text-4xl text-white">This room failed to load.</h1>
             <p className="mt-4 text-white/70">Open the museum lobby again or continue exploring from gallery.</p>
             <div className="mt-6 flex justify-center gap-3">
-              <Link to="/museum" className="rounded-full border border-white/15 bg-white/5 px-5 py-2 text-sm text-white/85">Retry Museum</Link>
+              <Link to="/museum" className="rounded-full border border-white/15 bg-white/5 px-5 py-2 text-sm text-white/85">Retry Bharat Lobby</Link>
               <Link to="/gallery" className="rounded-full bg-museum-gold px-5 py-2 text-sm text-black">Go to Gallery</Link>
             </div>
           </div>

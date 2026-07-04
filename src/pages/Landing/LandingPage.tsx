@@ -27,7 +27,7 @@ export function LandingPage() {
   return (
     <>
       <Helmet>
-        <title>Virtual Museum | Immersive Digital Exhibitions</title>
+        <title>Bharat Virtual Museum | Immersive Indian Exhibitions</title>
       </Helmet>
       <section className="relative overflow-hidden px-6 pb-14 pt-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(212,175,55,0.2),transparent_24%),radial-gradient(circle_at_85%_25%,rgba(139,92,246,0.16),transparent_20%),linear-gradient(180deg,rgba(9,9,9,0.1),rgba(9,9,9,0.88))]" />
@@ -38,10 +38,10 @@ export function LandingPage() {
               Award-worthy museum storytelling
             </span>
             <h1 className="max-w-5xl font-display text-6xl leading-[0.95] text-white sm:text-7xl lg:text-[7.5rem]">
-              Enter a museum shaped by light, motion, and memory.
+              Enter a Bharat museum shaped by light, memory, and living Indian culture.
             </h1>
             <p className="max-w-2xl text-lg leading-8 text-white/68 sm:text-xl">
-              Explore curated rooms, cinematic artwork detail, interactive chronology, saved collections, live narration, and a responsive digital lobby designed like a contemporary cultural institution.
+              Explore curated Indian rooms, cinematic artwork detail, interactive chronology, saved collections, live narration, and a responsive digital lobby inspired by contemporary Indian cultural institutions.
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <MuseumLinkButton to="/museum">Explore Museum</MuseumLinkButton>
@@ -51,7 +51,7 @@ export function LandingPage() {
             </div>
             <div className="flex items-center gap-3 text-sm uppercase tracking-[0.22em] text-white/50">
               <HiArrowDown className="text-museum-gold" />
-              Scroll for featured collections, exhibitions, and curator notes
+              Scroll for featured collections, exhibitions, and Bharat curator notes
             </div>
           </div>
           <div className="grid gap-4">
@@ -69,8 +69,8 @@ export function LandingPage() {
       <section className="mx-auto max-w-7xl px-6 py-18">
         <SectionHeading
           eyebrow="Featured Collections"
-          title="Curated rails with editorial rhythm."
-          description="Each collection is arranged like a gallery essay, balancing iconic works with quieter discoveries."
+          title="Curated rails with Indian editorial rhythm."
+          description="Each collection is arranged like a gallery essay, balancing iconic Indian works with quieter discoveries."
         />
         <div className="mt-10 grid gap-6 lg:grid-cols-3">
           {featuredCollections.map((collection) => (
@@ -97,9 +97,9 @@ export function LandingPage() {
         <GlassCard className="p-8">
           <p className="text-xs uppercase tracking-[0.28em] text-museum-gold">Curator's Note</p>
           <p className="mt-5 font-display text-3xl leading-tight text-white">
-            We designed this museum to feel less like clicking through pages and more like passing through moods, eras, and shared acts of looking.
+            We designed this museum to feel less like clicking through pages and more like walking through India’s moods, eras, and shared ways of seeing.
           </p>
-          <p className="mt-6 text-sm uppercase tracking-[0.18em] text-white/55">Mira Solenne, Digital Curator</p>
+          <p className="mt-6 text-sm uppercase tracking-[0.18em] text-white/55">Aarohi Menon, Bharat Digital Curator</p>
         </GlassCard>
       </section>
 

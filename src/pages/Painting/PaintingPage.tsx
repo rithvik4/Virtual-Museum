@@ -60,7 +60,7 @@ export function PaintingPage() {
                 <HiOutlineBookmark className="mr-2" />
                 {favoriteIds.includes(artwork.id) ? 'Saved' : 'Save'}
               </MuseumButton>
-              <MuseumButton variant="secondary" onClick={() => setViewerOpen(true)} disabled={!artwork.imageUrl && !artwork.thumbnailUrl}>
+              <MuseumButton variant="secondary" onClick={() => setViewerOpen(true)}>
                 <HiOutlineArrowsPointingOut className="mr-2" />
                 HD Viewer
               </MuseumButton>
@@ -77,8 +77,8 @@ export function PaintingPage() {
                 className="min-w-44 rounded-full border border-white/10 bg-white/5 text-sm text-white"
                 options={[
                   { value: 'en-US', label: 'English' },
-                  { value: 'fr-FR', label: 'French' },
                   { value: 'hi-IN', label: 'Hindi' },
+                  { value: 'te-IN', label: 'Telugu' },
                 ]}
               />
             </div>

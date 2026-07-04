@@ -9,11 +9,11 @@ type RoomProfile = {
 };
 
 const roomSoundProfiles: Record<string, RoomProfile> = {
-  egypt: { baseFrequency: 78, harmonicFrequency: 117, wave: 'triangle', filterFrequency: 850, gain: 0.028 },
-  renaissance: { baseFrequency: 164.81, harmonicFrequency: 246.94, wave: 'sine', filterFrequency: 1200, gain: 0.024 },
-  modern: { baseFrequency: 110, harmonicFrequency: 165, wave: 'sawtooth', filterFrequency: 700, gain: 0.022 },
-  photography: { baseFrequency: 146.83, harmonicFrequency: 220, wave: 'triangle', filterFrequency: 980, gain: 0.02 },
-  digital: { baseFrequency: 196, harmonicFrequency: 294, wave: 'square', filterFrequency: 1400, gain: 0.018 },
+  ancientIndia: { baseFrequency: 130.81, harmonicFrequency: 196, wave: 'triangle', filterFrequency: 920, gain: 0.028 },
+  courtlyIndia: { baseFrequency: 146.83, harmonicFrequency: 220, wave: 'sine', filterFrequency: 1180, gain: 0.024 },
+  modernIndia: { baseFrequency: 164.81, harmonicFrequency: 246.94, wave: 'sawtooth', filterFrequency: 760, gain: 0.022 },
+  peopleIndia: { baseFrequency: 110, harmonicFrequency: 174.61, wave: 'triangle', filterFrequency: 980, gain: 0.02 },
+  digitalIndia: { baseFrequency: 196, harmonicFrequency: 311.13, wave: 'square', filterFrequency: 1420, gain: 0.018 },
 };
 
 export function useAmbientRoomSound(roomId: string) {
@@ -81,7 +81,7 @@ export function useAmbientRoomSound(roomId: string) {
     await context.resume();
     clearOscillators();
 
-    const profile = roomSoundProfiles[targetRoomId] ?? roomSoundProfiles.egypt;
+    const profile = roomSoundProfiles[targetRoomId] ?? roomSoundProfiles.ancientIndia;
 
     if (!filterRef.current) {
       const filterNode = context.createBiquadFilter();

@@ -11,7 +11,7 @@ import { useMuseumOverview } from '@/hooks/useMuseumData';
 
 export function AudioGuidePage() {
   const { data } = useMuseumOverview();
-  const [selectedId, setSelectedId] = useState('sun-mask');
+  const [selectedId, setSelectedId] = useState('surya-mask');
   const [language, setLanguage] = useState('en-US');
 
   const selectedArtwork = useMemo(
@@ -25,13 +25,13 @@ export function AudioGuidePage() {
   return (
     <>
       <Helmet>
-        <title>Audio Guide | Virtual Museum</title>
+        <title>Bharat Audio Guide | Virtual Museum</title>
       </Helmet>
       <section className="mx-auto max-w-7xl px-6 py-16">
         <SectionHeading
-          eyebrow="Audio Guide"
-          title="Narration, captions, and calm playback controls."
-          description="This route uses the browser speech engine as a stand-in for produced audio tours, while preserving the playback model and language controls."
+          eyebrow="Bharat Audio Guide"
+          title="Narration, captions, and calm playback controls for Indian collections."
+          description="This route uses the browser speech engine as a stand-in for produced audio tours while preserving multilingual playback controls."
         />
         <div className="mt-10 grid gap-6 lg:grid-cols-[0.7fr_1.3fr]">
           <GlassCard className="p-6">
@@ -67,9 +67,9 @@ export function AudioGuidePage() {
                 className="min-w-40 rounded-full border border-white/10 bg-white/5 text-sm text-white"
                 options={[
                   { value: 'en-US', label: 'English' },
-                  { value: 'fr-FR', label: 'French' },
                   { value: 'hi-IN', label: 'Hindi' },
-                  { value: 'ar-SA', label: 'Arabic' },
+                  { value: 'ta-IN', label: 'Tamil' },
+                  { value: 'te-IN', label: 'Telugu' },
                 ]}
               />
               <input type="range" min="0.75" max="1.5" step="0.05" value={narration.rate} onChange={(event) => narration.setRate(Number(event.target.value))} />

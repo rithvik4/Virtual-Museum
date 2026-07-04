@@ -27,7 +27,56 @@ function seededFrameColor(seed: string): string {
   return `hsl(${hash}, 58%, 42%)`;
 }
 
-function buildEmbeddedFallbackTexture(seed: string, tint: string): Texture | null {
+function roomThemeLabel(roomId: string): string {
+  const labelMap: Record<string, string> = {
+    ancientIndia: 'Indus and Early Sacred Arts',
+    courtlyIndia: 'Classical and Courtly India',
+    modernIndia: 'Modern Indian Movements',
+    peopleIndia: 'People and Places of India',
+    digitalIndia: 'Digital India Futures',
+  };
+  return labelMap[roomId] ?? 'Museum';
+}
+
+function roomThemeColor(roomId: string): string {
+  const colorMap: Record<string, string> = {
+    ancientIndia: '#D4AF37',
+    courtlyIndia: '#C28C5A',
+    modernIndia: '#8B5CF6',
+    peopleIndia: '#92A8D1',
+    digitalIndia: '#00C2A8',
+  };
+  return colorMap[roomId] ?? '#4C7AA6';
+}
+
+function normalizeArtworkImageUrl(rawUrl: string): string {
+  const trimmed = rawUrl.trim();
+  if (!trimmed) {
+    return '';
+  }
+
+  if (trimmed.startsWith('//')) {
+    return `https:${trimmed}`;
+  }
+
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+
+  return `https://${trimmed}`;
+}
+
+function buildProxyImageUrl(sourceUrl: string): string {
+  const normalized = normalizeArtworkImageUrl(sourceUrl);
+  if (!normalized) {
+    return '';
+  }
+
+  // images.weserv.nl rehosts remote images with permissive CORS headers for canvas/webgl usage.
+  return `https://images.weserv.nl/?url=${encodeURIComponent(normalized)}&w=800&h=1040&fit=cover`;
+}
+
+function buildEmbeddedFallbackTexture(seed: string, tint: string, roomId: string): Texture | null {
   if (typeof document === 'undefined') {
     return null;
   }
@@ -43,12 +92,13 @@ function buildEmbeddedFallbackTexture(seed: string, tint: string): Texture | nul
     return null;
   }
 
-  const hash = seed.split('').reduce((acc, char, index) => {
+  const hash = `${seed}-${roomId}`.split('').reduce((acc, char, index) => {
     return (acc + char.charCodeAt(0) * (index + 1) * 17) % 360;
   }, 0);
-  const primary = `hsl(${hash}, 58%, 42%)`;
+  const roomColor = roomThemeColor(roomId);
+  const primary = `hsl(${hash}, 58%, 36%)`;
   const secondary = `hsl(${(hash + 48) % 360}, 46%, 12%)`;
-  const accent = tint || primary;
+  const accent = tint || roomColor;
   const gradient = context.createLinearGradient(0, 0, width, height);
   gradient.addColorStop(0, primary);
   gradient.addColorStop(1, secondary);
@@ -58,6 +108,116 @@ function buildEmbeddedFallbackTexture(seed: string, tint: string): Texture | nul
   context.globalAlpha = 0.18;
   context.fillStyle = accent;
   context.fillRect(20, 20, width - 40, height - 40);
+
+  const drawAncientIndiaScene = () => {
+    context.globalAlpha = 0.24;
+    context.fillStyle = '#E7C870';
+    context.beginPath();
+    context.moveTo(48, height - 68);
+    context.lineTo(124, 148);
+    context.lineTo(200, height - 68);
+    context.closePath();
+    context.fill();
+
+    context.beginPath();
+    context.moveTo(150, height - 60);
+    context.lineTo(240, 174);
+    context.lineTo(330, height - 60);
+    context.closePath();
+    context.fill();
+
+    context.globalAlpha = 0.16;
+    context.fillStyle = '#F5E7C0';
+    for (let i = 0; i < 18; i += 1) {
+      context.fillRect(22 + i * 18, height - 34 - (i % 3), 12, 8);
+    }
+  };
+
+  const drawCourtlyIndiaScene = () => {
+    context.globalAlpha = 0.26;
+    context.fillStyle = '#DAB27A';
+    context.fillRect(58, 84, 240, 298);
+
+    context.globalAlpha = 0.2;
+    context.fillStyle = '#8A5D3B';
+    context.beginPath();
+    context.arc(178, 184, 54, 0, Math.PI * 2);
+    context.fill();
+
+    context.fillRect(134, 244, 88, 116);
+    context.globalAlpha = 0.14;
+    context.strokeStyle = '#F7E9CF';
+    context.lineWidth = 3;
+    context.strokeRect(40, 64, 276, 334);
+  };
+
+  const drawModernScene = () => {
+    context.globalAlpha = 0.28;
+    context.fillStyle = '#B380FF';
+    context.fillRect(42, 72, 120, 156);
+
+    context.fillStyle = '#4BE7D8';
+    context.fillRect(164, 112, 142, 98);
+
+    context.fillStyle = '#F59E0B';
+    context.fillRect(94, 246, 194, 122);
+
+    context.globalAlpha = 0.18;
+    context.strokeStyle = '#F8F6FF';
+    context.lineWidth = 4;
+    context.strokeRect(36, 66, 286, 310);
+  };
+
+  const drawPhotographyScene = () => {
+    context.globalAlpha = 0.26;
+    context.fillStyle = '#C3CEDF';
+    context.fillRect(44, 94, 268, 258);
+
+    context.globalAlpha = 0.2;
+    context.fillStyle = '#1F2937';
+    context.fillRect(74, 132, 210, 172);
+
+    context.globalAlpha = 0.3;
+    context.strokeStyle = '#E5ECF7';
+    context.lineWidth = 5;
+    context.strokeRect(84, 142, 190, 152);
+
+    context.beginPath();
+    context.arc(179, 218, 44, 0, Math.PI * 2);
+    context.stroke();
+  };
+
+  const drawDigitalScene = () => {
+    context.globalAlpha = 0.24;
+    context.fillStyle = '#00E3BF';
+    for (let row = 0; row < 6; row += 1) {
+      for (let col = 0; col < 4; col += 1) {
+        context.fillRect(52 + row * 42, 72 + col * 82, 26, 26);
+      }
+    }
+
+    context.globalAlpha = 0.2;
+    context.strokeStyle = '#72FFE3';
+    context.lineWidth = 3;
+    for (let i = 0; i < 5; i += 1) {
+      context.beginPath();
+      context.moveTo(40, 92 + i * 78);
+      context.lineTo(316, 92 + i * 78);
+      context.stroke();
+    }
+  };
+
+  if (roomId === 'ancientIndia') {
+    drawAncientIndiaScene();
+  } else if (roomId === 'courtlyIndia') {
+    drawCourtlyIndiaScene();
+  } else if (roomId === 'modernIndia') {
+    drawModernScene();
+  } else if (roomId === 'peopleIndia') {
+    drawPhotographyScene();
+  } else if (roomId === 'digitalIndia') {
+    drawDigitalScene();
+  }
 
   context.globalAlpha = 0.14;
   for (let i = 0; i < 70; i += 1) {
@@ -72,7 +232,7 @@ function buildEmbeddedFallbackTexture(seed: string, tint: string): Texture | nul
   context.fillStyle = '#FFFFFF';
   context.font = '700 24px Georgia';
   context.textAlign = 'center';
-  context.fillText('Virtual Museum', width / 2, height / 2 - 8);
+  context.fillText(roomThemeLabel(roomId), width / 2, height / 2 - 8);
 
   context.globalAlpha = 0.72;
   context.font = '500 14px Arial';
@@ -299,6 +459,49 @@ function AvatarArms({ walking }: { walking: boolean }) {
   );
 }
 
+function scoreArtworkRoomRelevance(artwork: Artwork, roomId: string): number {
+  const haystack = [
+    artwork.title,
+    artwork.style,
+    artwork.medium,
+    artwork.description,
+    artwork.historicalImportance,
+    artwork.collection,
+    artwork.period,
+  ]
+    .join(' ')
+    .toLowerCase();
+
+  const keywordMap: Record<string, string[]> = {
+    ancientIndia: ['indus', 'sacred', 'temple', 'ritual', 'icon', 'sculpture', 'stone', 'shiva', 'vishnu', 'buddha'],
+    courtlyIndia: ['miniature', 'court', 'atelier', 'manuscript', 'rajput', 'mughal', 'devotional', 'portrait', 'palace'],
+    modernIndia: ['modern', 'post-independence', 'abstraction', 'abstract', 'color', 'canvas', 'urban', 'progressive'],
+    peopleIndia: ['photograph', 'photography', 'photo', 'documentary', 'street', 'festival', 'monsoon', 'portrait', 'print'],
+    digitalIndia: ['digital', 'generative', 'code', 'interactive', 'reactive', 'data', 'projection', 'ai', 'future'],
+  };
+
+  const bonusKeywords = keywordMap[roomId] ?? [];
+  let score = 0;
+
+  for (const keyword of bonusKeywords) {
+    if (haystack.includes(keyword)) {
+      score += 3;
+    }
+  }
+
+  if (artwork.roomId === roomId) {
+    score += 8;
+  }
+
+  if (artwork.spotlight) {
+    score += 1;
+  }
+
+  score += Math.round(artwork.popularity / 35);
+
+  return score;
+}
+
 function ArtworkFrame({
   artwork,
   position,
@@ -314,8 +517,8 @@ function ArtworkFrame({
 }) {
   const primaryImageUrl = (artwork.imageUrl ?? '').trim();
   const secondaryImageUrl = (artwork.thumbnailUrl ?? '').trim();
-  const resolvedPrimaryImageUrl = primaryImageUrl ? encodeURI(primaryImageUrl) : '';
-  const resolvedSecondaryImageUrl = secondaryImageUrl ? encodeURI(secondaryImageUrl) : '';
+  const resolvedPrimaryImageUrl = normalizeArtworkImageUrl(primaryImageUrl);
+  const resolvedSecondaryImageUrl = normalizeArtworkImageUrl(secondaryImageUrl);
   const frameFallbackColor = useMemo(() => seededFrameColor(artwork.id), [artwork.id]);
 
   return (
@@ -344,6 +547,7 @@ function ArtworkFrame({
           secondaryImageUrl={resolvedSecondaryImageUrl}
           fallback={frameFallbackColor}
           fallbackSeed={artwork.id}
+          roomId={artwork.roomId}
         />
       </mesh>
       <mesh position={[0, 0, 0.105]}>
@@ -368,26 +572,44 @@ function ArtworkTextureMaterial({
   secondaryImageUrl,
   fallback,
   fallbackSeed,
+  roomId,
 }: {
   imageUrl: string;
   secondaryImageUrl: string;
   fallback: string;
   fallbackSeed: string;
+  roomId: string;
 }) {
-  const generatedFallbackTexture = useMemo(() => buildEmbeddedFallbackTexture(fallbackSeed, fallback), [fallbackSeed, fallback]);
-  const fallbackUrl = useMemo(() => `https://picsum.photos/seed/${encodeURIComponent(fallbackSeed)}/356/464`, [fallbackSeed]);
+  const generatedFallbackTexture = useMemo(
+    () => buildEmbeddedFallbackTexture(fallbackSeed, fallback, roomId),
+    [fallbackSeed, fallback, roomId],
+  );
 
   const attemptUrls = useMemo(() => {
     const urls: string[] = [];
-    if (imageUrl) {
-      urls.push(imageUrl);
-    }
-    if (secondaryImageUrl && secondaryImageUrl !== imageUrl) {
-      urls.push(secondaryImageUrl);
-    }
-    urls.push(fallbackUrl);
+    const seen = new Set<string>();
+
+    const addUrl = (value: string) => {
+      const normalized = normalizeArtworkImageUrl(value);
+      if (!normalized || seen.has(normalized)) {
+        return;
+      }
+
+      seen.add(normalized);
+      urls.push(normalized);
+
+      const proxied = buildProxyImageUrl(normalized);
+      if (proxied && !seen.has(proxied)) {
+        seen.add(proxied);
+        urls.push(proxied);
+      }
+    };
+
+    addUrl(imageUrl);
+    addUrl(secondaryImageUrl);
+
     return urls;
-  }, [imageUrl, secondaryImageUrl, fallbackUrl]);
+  }, [imageUrl, secondaryImageUrl]);
 
   const [texture, setTexture] = useState<Texture | null>(generatedFallbackTexture);
   const [attemptIndex, setAttemptIndex] = useState(0);
@@ -414,7 +636,13 @@ function ArtworkTextureMaterial({
   useEffect(() => {
     const attemptUrl = attemptUrls[attemptIndex] ?? '';
     if (!attemptUrl) {
-      setTexture(null);
+      setTexture((previousTexture) => {
+        if (previousTexture && previousTexture !== generatedFallbackTexture) {
+          previousTexture.dispose();
+        }
+        textureRef.current = generatedFallbackTexture;
+        return generatedFallbackTexture;
+      });
       return;
     }
 
@@ -455,7 +683,7 @@ function ArtworkTextureMaterial({
     return () => {
       disposed = true;
     };
-  }, [attemptIndex, attemptUrls]);
+  }, [attemptIndex, attemptUrls, generatedFallbackTexture]);
 
   return (
     texture ? (
@@ -489,7 +717,22 @@ function RoomScene({
   onMovingChange: (moving: boolean) => void;
   walking: boolean;
 }) {
-  const wallArtworks = artworks.slice(0, 16);
+  const wallArtworks = useMemo(() => {
+    const scored = [...artworks]
+      .map((artwork) => ({
+        artwork,
+        score: scoreArtworkRoomRelevance(artwork, room.id),
+      }))
+      .sort((a, b) => {
+        if (b.score !== a.score) {
+          return b.score - a.score;
+        }
+        return b.artwork.popularity - a.artwork.popularity;
+      })
+      .map((entry) => entry.artwork);
+
+    return scored.slice(0, 16);
+  }, [artworks, room.id]);
 
   const frames = useMemo(() => {
     return wallArtworks.map((artwork, index) => {
@@ -639,9 +882,9 @@ export function ImmersiveRoomExperience({ room, artworks, rooms, onSwitchRoom, o
       <GlassCard className="p-5">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.28em] text-museum-gold">Immersive Room Mode</p>
+            <p className="text-xs uppercase tracking-[0.28em] text-museum-gold">Immersive Bharat Room Mode</p>
             <h3 className="mt-2 font-display text-3xl text-white">{room.name}</h3>
-            <p className="mt-2 text-sm text-white/65">Click inside the 3D view to lock cursor, then use W A S D (or arrow keys) and mouse to walk and look around 360 degrees. Click any frame to inspect and narrate.</p>
+            <p className="mt-2 text-sm text-white/65">Click inside the 3D view to lock cursor, then use W A S D (or arrow keys) and mouse to walk through Bharat rooms in 360 degrees. Click any frame to inspect and narrate.</p>
           </div>
           <button
             type="button"

@@ -9,6 +9,17 @@ import { useMuseumOverview } from '@/hooks/useMuseumData';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import type { SearchFilters } from '@/types/museum';
 
+function yearSortValue(yearLabel: string): number {
+  const normalized = yearLabel.trim().toLowerCase();
+  const match = normalized.match(/\d{1,4}/);
+  if (!match) {
+    return Number.MAX_SAFE_INTEGER;
+  }
+
+  const value = Number(match[0]);
+  return normalized.includes('bce') ? -value : value;
+}
+
 export function GalleryPage() {
   const { data } = useMuseumOverview();
   const { favoriteIds, toggleFavorite } = useFavoritesStore();
@@ -38,6 +49,10 @@ export function GalleryPage() {
     });
   }, [data, filters]);
 
+  const visibleArtworks = useMemo(() => {
+    return [...filtered].sort((left, right) => yearSortValue(left.year) - yearSortValue(right.year));
+  }, [filtered]);
+
   const periods = [...new Set(data?.artworks.map((artwork) => artwork.period) ?? [])];
   const countries = [...new Set(data?.artworks.map((artwork) => artwork.country) ?? [])];
   const collections = [...new Set(data?.artworks.map((artwork) => artwork.collection) ?? [])];
@@ -45,13 +60,13 @@ export function GalleryPage() {
   return (
     <>
       <Helmet>
-        <title>Gallery | Virtual Museum</title>
+        <title>Bharat Gallery | Virtual Museum</title>
       </Helmet>
       <section className="mx-auto max-w-7xl px-6 py-16">
         <SectionHeading
-          eyebrow="Gallery"
-          title="Browse the collection through mood, place, and period."
-          description="This gallery balances editorial curation with fast discovery tools so the museum remains explorable at scale."
+          eyebrow="Bharat Gallery"
+          title="Browse Indian collections through region, mood, and historical period."
+          description="This gallery balances curation with fast discovery so Indian art traditions remain deeply explorable at scale."
         />
         <div className="mt-10">
           <GalleryFilters
@@ -65,11 +80,11 @@ export function GalleryPage() {
         </div>
 
         <GlassCard className="mt-8 p-5">
-          <p className="text-sm uppercase tracking-[0.18em] text-white/55">{filtered.length} works available</p>
+          <p className="text-sm uppercase tracking-[0.18em] text-white/55">{visibleArtworks.length} works available</p>
         </GlassCard>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((artwork) => (
+          {visibleArtworks.map((artwork) => (
             <ArtworkCard
               key={artwork.id}
               artwork={artwork}

@@ -22,7 +22,7 @@ export function GlobalShell({ children }: PropsWithChildren) {
       <header className="sticky top-0 z-50 border-b border-white/10 bg-black/30 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
           <Link to="/" className="font-display text-xl tracking-[0.24em] text-museum-gold uppercase">
-            Virtual Museum
+            Bharat Virtual Museum
           </Link>
           <nav className="hidden items-center gap-6 md:flex">
             {navItems.map((item) => (
@@ -62,15 +62,15 @@ export function GlobalShell({ children }: PropsWithChildren) {
       <footer className="border-t border-white/10 bg-black/20">
         <div className="mx-auto grid max-w-7xl gap-6 px-6 py-10 md:grid-cols-3">
           <div>
-            <p className="font-display text-2xl text-white">Virtual Museum</p>
+            <p className="font-display text-2xl text-white">Bharat Virtual Museum</p>
             <p className="mt-3 max-w-md text-sm leading-7 text-white/60">
-              A museum-like digital environment built around story, spatial discovery, and quiet cinematic interaction.
+              An India-first digital museum environment built around story, spatial discovery, and immersive cultural interaction.
             </p>
           </div>
           <div className="text-sm uppercase tracking-[0.18em] text-white/55">
             <p>Open experiences</p>
             <div className="mt-3 space-y-2 normal-case tracking-normal text-white/70">
-              <Link to="/museum" className="block">Museum lobby</Link>
+              <Link to="/museum" className="block">Bharat museum lobby</Link>
               <Link to="/audio-guide" className="block">Audio guide</Link>
               <Link to="/admin" className="block">Admin dashboard</Link>
             </div>

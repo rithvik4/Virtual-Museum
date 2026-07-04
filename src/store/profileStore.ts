@@ -15,9 +15,9 @@ export const useProfileStore = create<ProfileState>()(
   persist(
     (set) => ({
       tier: 'Premium',
-      visitedRoomIds: ['egypt', 'renaissance'],
+      visitedRoomIds: ['ancientIndia', 'courtlyIndia'],
       xp: 1240,
-      achievements: ['Curator Circle', 'First Audio Tour', 'Digital Explorer'],
+      achievements: ['Bharat Curator Circle', 'First Audio Darshan', 'Digital India Explorer'],
       markRoomVisited: (roomId) =>
         set((state) => ({
           visitedRoomIds: state.visitedRoomIds.includes(roomId)

@@ -15,7 +15,7 @@ import { useProfileStore } from '@/store/profileStore';
 
 export function MuseumPage() {
   const { data } = useMuseumOverview();
-  const [activeRoomId, setActiveRoomId] = useState('egypt');
+  const [activeRoomId, setActiveRoomId] = useState('ancientIndia');
   const [immersiveMode, setImmersiveMode] = useState(false);
   const markRoomVisited = useProfileStore((state) => state.markRoomVisited);
   const ambient = useAmbientRoomSound(activeRoomId);
@@ -44,13 +44,13 @@ export function MuseumPage() {
   return (
     <>
       <Helmet>
-        <title>Museum Lobby | Virtual Museum</title>
+        <title>Bharat Museum Lobby | Virtual Museum</title>
       </Helmet>
       <section className="mx-auto max-w-7xl px-6 py-16">
         <SectionHeading
-          eyebrow="Museum Lobby"
-          title="A living cultural floor with room portals, curated routes, and real-time highlights."
-          description="Orbit the rotunda, switch rooms, and follow an evolving curator route that blends atmosphere, top works, and timeline context."
+          eyebrow="Bharat Museum Lobby"
+          title="A living Indian cultural floor with curated room portals, regional stories, and real-time highlights."
+          description="Orbit the rotunda, switch rooms, and follow an evolving route from sacred arts and court ateliers to modern movements and digital India futures."
         />
 
         {immersiveMode && activeRoom && data ? (
@@ -70,7 +70,7 @@ export function MuseumPage() {
               onClick={() => setImmersiveMode(true)}
               className="rounded-full border border-museum-gold/35 bg-museum-gold/12 px-5 py-2 text-sm uppercase tracking-[0.16em] text-museum-gold transition hover:bg-museum-gold/20"
             >
-              Enter 360 Room Walkthrough
+              Enter 360 Bharat Walkthrough
             </button>
           </div>
         ) : null}

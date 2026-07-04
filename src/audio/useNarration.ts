@@ -33,6 +33,36 @@ export function useNarration({ text, language }: NarrationOptions) {
 
   const available = useMemo(() => typeof window !== 'undefined' && 'speechSynthesis' in window, []);
 
+  const normalizeLang = (value: string) => value.toLowerCase().replace('_', '-').trim();
+
+  const choosePreferredVoice = (voiceList: SpeechSynthesisVoice[], requestedLanguage: string) => {
+    const requested = normalizeLang(requestedLanguage);
+    const prefix = requested.split('-')[0];
+
+    const byLang = voiceList.find((voice) => normalizeLang(voice.lang) === requested)
+      ?? voiceList.find((voice) => normalizeLang(voice.lang).startsWith(`${prefix}-`))
+      ?? voiceList.find((voice) => normalizeLang(voice.lang).startsWith(prefix));
+
+    if (byLang) {
+      return byLang;
+    }
+
+    // Some engines expose Indic voices with non-standard lang tags but descriptive names.
+    if (prefix === 'te') {
+      return voiceList.find((voice) => voice.name.toLowerCase().includes('telugu')) ?? null;
+    }
+
+    if (prefix === 'hi') {
+      return voiceList.find((voice) => voice.name.toLowerCase().includes('hindi')) ?? null;
+    }
+
+    if (prefix === 'ta') {
+      return voiceList.find((voice) => voice.name.toLowerCase().includes('tamil')) ?? null;
+    }
+
+    return null;
+  };
+
   const play = () => {
     if (!available) {
       return;
@@ -40,11 +70,9 @@ export function useNarration({ text, language }: NarrationOptions) {
 
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    const requestedLanguage = language.toLowerCase();
-    const languagePrefix = requestedLanguage.split('-')[0];
-    const preferredVoice = voices.find((voice) => voice.lang.toLowerCase() === requestedLanguage)
-      ?? voices.find((voice) => voice.lang.toLowerCase().startsWith(`${languagePrefix}-`))
-      ?? null;
+    const currentVoices = window.speechSynthesis.getVoices();
+    const voiceList = currentVoices.length > 0 ? currentVoices : voices;
+    const preferredVoice = choosePreferredVoice(voiceList, language);
 
     utterance.lang = preferredVoice?.lang ?? language;
     if (preferredVoice) {
