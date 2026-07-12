@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { HiOutlineSpeakerWave, HiOutlineSpeakerXMark } from 'react-icons/hi2';
 import { Link } from 'react-router-dom';
-
-import { useAmbientRoomSound } from '@/audio/useAmbientRoomSound';
 import { GlassCard } from '@/cards/GlassCard';
 import { ArtworkVisual } from '@/common/ArtworkVisual';
 import { SectionHeading } from '@/common/SectionHeading';
@@ -18,7 +15,6 @@ export function MuseumPage() {
   const [activeRoomId, setActiveRoomId] = useState('ancientIndia');
   const [immersiveMode, setImmersiveMode] = useState(false);
   const markRoomVisited = useProfileStore((state) => state.markRoomVisited);
-  const ambient = useAmbientRoomSound(activeRoomId);
 
   const activeRoom = data?.rooms.find((room) => room.id === activeRoomId) ?? data?.rooms[0];
   const activeRoomWorks = data?.artworks.filter((artwork) => artwork.roomId === activeRoomId) ?? [];
@@ -34,12 +30,6 @@ export function MuseumPage() {
       markRoomVisited(activeRoomId);
     }
   }, [activeRoomId, markRoomVisited]);
-
-  useEffect(() => {
-    if (immersiveMode) {
-      ambient.stop();
-    }
-  }, [ambient, immersiveMode]);
 
   return (
     <>
@@ -132,14 +122,10 @@ export function MuseumPage() {
                     </div>
                     <button
                       type="button"
-                      onClick={() => {
-                        void ambient.toggle();
-                      }}
-                      disabled={!ambient.supported}
-                      className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2 text-sm text-white/80 transition hover:border-museum-gold/40 hover:text-white disabled:opacity-50"
+                      onClick={() => setImmersiveMode(true)}
+                      className="inline-flex items-center gap-2 rounded-full border border-museum-gold/35 bg-museum-gold/12 px-4 py-2 text-sm uppercase tracking-[0.14em] text-museum-gold transition hover:bg-museum-gold/20"
                     >
-                      {ambient.isPlaying ? <HiOutlineSpeakerXMark /> : <HiOutlineSpeakerWave />}
-                      {ambient.isPlaying ? 'Stop ambient' : 'Ambient preview'}
+                      Enter 360 Room
                     </button>
                   </div>
                   <p className="mt-4 text-white/68">{activeRoom?.description}</p>

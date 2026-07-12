@@ -62,3 +62,51 @@ select {
   background: rgba(212, 175, 55, 0.25);
   color: white;
 }
+
+/* ── Accessibility: Reduce motion ─────────────────────────────────────── */
+[data-motion='reduced'] *,
+[data-motion='reduced'] *::before,
+[data-motion='reduced'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ── Accessibility: High contrast ─────────────────────────────────────── */
+[data-contrast='high'] {
+  --color-museum-bg: #000000;
+  --color-museum-surface: #0a0a0a;
+  --color-museum-text: #ffffff;
+  --color-museum-secondary: #ffffff;
+  --color-museum-gold: #ffd700;
+}
+
+[data-contrast='high'] body {
+  background: #000000;
+}
+
+[data-contrast='high'] * {
+  border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+[data-contrast='high'] p,
+[data-contrast='high'] span,
+[data-contrast='high'] li,
+[data-contrast='high'] h1,
+[data-contrast='high'] h2,
+[data-contrast='high'] h3,
+[data-contrast='high'] h4,
+[data-contrast='high'] h5,
+[data-contrast='high'] h6 {
+  color: #ffffff !important;
+}
+
+/* ── Accessibility: Text scale ────────────────────────────────────────── */
+[data-scale='large'] {
+  font-size: 112.5%; /* 18px base instead of 16px */
+}
+
+[data-scale='large'] h1 { font-size: 2.5rem; }
+[data-scale='large'] h2 { font-size: 2rem; }
+[data-scale='large'] h3 { font-size: 1.6rem; }

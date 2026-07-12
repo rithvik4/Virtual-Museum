@@ -16,7 +16,6 @@ import { FavoritesPage } from '@/pages/Favorites/FavoritesPage';
 import { SearchPage } from '@/pages/Search/SearchPage';
 import { AudioGuidePage } from '@/pages/AudioGuide/AudioGuidePage';
 import { ArtistPage } from '@/pages/Artist/ArtistPage';
-import { AdminPage } from '@/pages/Admin/AdminPage';
 
 function withLazyElement(Component: ComponentType) {
   return <Component />;
@@ -45,7 +44,6 @@ export const router = createBrowserRouter([
       { path: 'search', element: withLazyElement(SearchPage) },
       { path: 'audio-guide', element: withLazyElement(AudioGuidePage) },
       { path: 'artist/:artistId', element: withLazyElement(ArtistPage) },
-      { path: 'admin', element: withLazyElement(AdminPage) },
     ],
   },
   {

@@ -1,5 +1,3 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { Helmet } from 'react-helmet-async';
 import { HiArrowDown, HiOutlineSparkles } from 'react-icons/hi2';
 
@@ -8,21 +6,10 @@ import { GlassCard } from '@/cards/GlassCard';
 import { SectionHeading } from '@/common/SectionHeading';
 import { useMuseumOverview } from '@/hooks/useMuseumData';
 
-type NewsletterFormValues = {
-  email: string;
-};
-
 export function LandingPage() {
   const { data } = useMuseumOverview();
-  const [submitted, setSubmitted] = useState(false);
-  const { register, handleSubmit, reset } = useForm<NewsletterFormValues>({ defaultValues: { email: '' } });
 
   const featuredCollections = data?.collections.slice(0, 3) ?? [];
-
-  const onSubmit = handleSubmit(() => {
-    setSubmitted(true);
-    reset();
-  });
 
   return (
     <>
@@ -51,7 +38,7 @@ export function LandingPage() {
             </div>
             <div className="flex items-center gap-3 text-sm uppercase tracking-[0.22em] text-white/50">
               <HiArrowDown className="text-museum-gold" />
-              Scroll for featured collections, exhibitions, and Bharat curator notes
+              Scroll for featured collections and Indian gallery highlights
             </div>
           </div>
           <div className="grid gap-4">
@@ -83,56 +70,6 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-6 px-6 py-8 lg:grid-cols-[1.2fr_0.8fr]">
-        <GlassCard className="p-8 lg:p-10">
-          <p className="text-xs uppercase tracking-[0.28em] text-museum-gold">Latest Exhibition</p>
-          <h2 className="mt-4 font-display text-4xl text-white sm:text-5xl">{data?.events[0]?.title ?? 'Late Light Curator Tour'}</h2>
-          <p className="mt-4 max-w-2xl text-lg leading-8 text-white/68">{data?.events[0]?.summary}</p>
-          <div className="mt-8 flex flex-wrap gap-3 text-sm uppercase tracking-[0.18em] text-white/55">
-            <span>{data?.events[0]?.date}</span>
-            <span>·</span>
-            <span>{data?.events[0]?.location}</span>
-          </div>
-        </GlassCard>
-        <GlassCard className="p-8">
-          <p className="text-xs uppercase tracking-[0.28em] text-museum-gold">Curator's Note</p>
-          <p className="mt-5 font-display text-3xl leading-tight text-white">
-            We designed this museum to feel less like clicking through pages and more like walking through India’s moods, eras, and shared ways of seeing.
-          </p>
-          <p className="mt-6 text-sm uppercase tracking-[0.18em] text-white/55">Aarohi Menon, Bharat Digital Curator</p>
-        </GlassCard>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-6 py-18">
-        <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-          <GlassCard className="p-8">
-            <p className="text-xs uppercase tracking-[0.28em] text-museum-gold">Awards & Sponsors</p>
-            <div className="mt-6 grid grid-cols-2 gap-3 text-sm uppercase tracking-[0.18em] text-white/65 sm:grid-cols-4">
-              {['Awwwards Honoree', 'Design Archive', 'Culture Grid', 'Studio Meridian'].map((item) => (
-                <div key={item} className="rounded-[1.25rem] border border-white/10 bg-white/5 px-4 py-5 text-center">
-                  {item}
-                </div>
-              ))}
-            </div>
-          </GlassCard>
-          <GlassCard className="p-8">
-            <p className="text-xs uppercase tracking-[0.28em] text-museum-gold">Newsletter</p>
-            <h2 className="mt-4 font-display text-4xl text-white">Receive new exhibition stories and curator notes.</h2>
-            <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-4 sm:flex-row">
-              <input
-                {...register('email', { required: true })}
-                type="email"
-                placeholder="Your email"
-                className="min-w-0 flex-1 rounded-full border border-white/12 bg-white/5 px-5 py-3 text-white outline-none placeholder:text-white/35 focus:border-museum-gold/35"
-              />
-              <button type="submit" className="rounded-full bg-museum-gold px-6 py-3 font-semibold text-black">
-                Join
-              </button>
-            </form>
-            <p className="mt-4 text-sm text-white/60">{submitted ? 'You are on the curator list.' : 'Monthly dispatches only. No clutter.'}</p>
-          </GlassCard>
-        </div>
-      </section>
     </>
   );
 }

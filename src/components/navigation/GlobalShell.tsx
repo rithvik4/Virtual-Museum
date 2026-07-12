@@ -72,12 +72,11 @@ export function GlobalShell({ children }: PropsWithChildren) {
             <div className="mt-3 space-y-2 normal-case tracking-normal text-white/70">
               <Link to="/museum" className="block">Bharat museum lobby</Link>
               <Link to="/audio-guide" className="block">Audio guide</Link>
-              <Link to="/admin" className="block">Admin dashboard</Link>
             </div>
           </div>
           <div className="text-sm leading-7 text-white/60">
             <p className="uppercase tracking-[0.18em] text-white/55">Current build</p>
-            <p className="mt-3">Includes immersive landing, interactive lobby, collection discovery, voice-assisted search, narration, saved favorites, and dashboard analytics.</p>
+            <p className="mt-3">Includes immersive landing, interactive lobby, collection discovery, voice-assisted search, narration, and saved favorites.</p>
           </div>
         </div>
       </footer>

@@ -48,20 +48,19 @@ export function useNarration({ text, language }: NarrationOptions) {
     }
 
     // Some engines expose Indic voices with non-standard lang tags but descriptive names.
-    if (prefix === 'te') {
-      return voiceList.find((voice) => voice.name.toLowerCase().includes('telugu')) ?? null;
-    }
-
     if (prefix === 'hi') {
       return voiceList.find((voice) => voice.name.toLowerCase().includes('hindi')) ?? null;
     }
 
-    if (prefix === 'ta') {
-      return voiceList.find((voice) => voice.name.toLowerCase().includes('tamil')) ?? null;
-    }
-
     return null;
   };
+
+  const hasVoiceForLanguage = useMemo(() => {
+    if (!available) return false;
+    const voiceList = voices.length > 0 ? voices : (typeof window !== 'undefined' ? window.speechSynthesis.getVoices() : []);
+    return choosePreferredVoice(voiceList, language) !== null;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [voices, language, available]);
 
   const play = () => {
     if (!available) {
@@ -80,6 +79,7 @@ export function useNarration({ text, language }: NarrationOptions) {
     }
     utterance.rate = rate;
     utterance.onend = () => setSpeaking(false);
+    utterance.onerror = () => setSpeaking(false);
     utteranceRef.current = utterance;
     setSpeaking(true);
     window.speechSynthesis.speak(utterance);
@@ -100,5 +100,5 @@ export function useNarration({ text, language }: NarrationOptions) {
     setSpeaking(false);
   };
 
-  return { available, speaking, rate, setRate, play, pause, resume, stop };
+  return { available, speaking, hasVoiceForLanguage, rate, setRate, play, pause, resume, stop };
 }

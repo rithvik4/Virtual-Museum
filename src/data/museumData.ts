@@ -1086,12 +1086,7 @@ const events: MuseumEvent[] = [
   { id: 'family-harbor', title: 'Monsoon Memory Family Hour', date: 'Sunday, 11:00 AM', location: 'People and Places Wing', summary: 'Family storytelling with photo prompts inspired by everyday India and festival streets.', category: 'Family' },
 ];
 
-const stats: MuseumStat[] = [
-  { label: 'Visitors today', value: '18,420', detail: '12% above weekly average' },
-  { label: 'Average visit', value: '43 min', detail: 'Longer sessions in Digital India Futures and People and Places rooms' },
-  { label: 'Most loved work', value: 'Standing Vishnu as Keshava', detail: 'Highest save rate this month' },
-  { label: 'Live narration', value: '6 tracks', detail: 'English, Hindi, Tamil, Telugu' },
-];
+const stats: MuseumStat[] = [];
 
 export const museumOverview: MuseumOverview = {
   artworks,
@@ -1102,9 +1097,9 @@ export const museumOverview: MuseumOverview = {
   events,
   stats,
   dashboard: {
-    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    visitors: [2200, 2500, 2800, 2600, 3400, 4100, 3820],
-    popularity: [78, 82, 80, 83, 88, 95, 91],
-    roomTraffic: [64, 72, 58, 81, 75, 93, 87],
+    labels: [],
+    visitors: [],
+    popularity: [],
+    roomTraffic: [],
   },
 };

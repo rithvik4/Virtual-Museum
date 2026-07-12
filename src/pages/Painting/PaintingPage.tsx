@@ -16,18 +16,46 @@ import { useFavoritesStore } from '@/store/favoritesStore';
 
 export function PaintingPage() {
   const { paintingId } = useParams();
-  const { data: artwork } = useArtwork(paintingId ?? '');
+  const { data: artwork, isLoading } = useArtwork(paintingId ?? '');
   const { data: overview } = useMuseumOverview();
   const { favoriteIds, toggleFavorite } = useFavoritesStore();
   const [language, setLanguage] = useState('en-US');
   const [viewerOpen, setViewerOpen] = useState(false);
   const narrationText = useMemo(() => getLocalizedNarrationText(artwork, language), [artwork, language]);
   const narration = useNarration({ text: narrationText, language });
+  const handleLanguageChange = (lang: string) => { narration.stop(); setLanguage(lang); };
 
   const relatedArtworks = overview?.artworks.filter((entry) => artwork?.relatedIds.includes(entry.id)) ?? [];
 
+  if (isLoading) {
+    return (
+      <section className="mx-auto max-w-7xl px-6 py-16">
+        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="h-[660px] animate-pulse rounded-[2rem] bg-white/5" />
+          <div className="space-y-4 rounded-[2rem] bg-white/5 p-8">
+            <div className="h-4 w-24 animate-pulse rounded-full bg-white/10" />
+            <div className="h-10 w-3/4 animate-pulse rounded-xl bg-white/10" />
+            <div className="h-4 w-1/2 animate-pulse rounded-full bg-white/10" />
+            <div className="mt-6 h-32 animate-pulse rounded-2xl bg-white/10" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   if (!artwork) {
-    return null;
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center px-6 text-center text-white">
+        <div className="max-w-md space-y-4">
+          <p className="font-mono text-xs uppercase tracking-[0.4em] text-museum-gold">404</p>
+          <h1 className="font-display text-4xl">This artwork doesn&apos;t exist.</h1>
+          <p className="text-white/60">The painting ID <span className="font-mono text-white/80">{paintingId}</span> was not found in the collection.</p>
+          <Link to="/gallery" className="inline-flex rounded-full bg-museum-gold px-6 py-3 text-sm font-medium text-black">
+            Browse Gallery
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -73,14 +101,18 @@ export function PaintingPage() {
               <label className="text-sm text-white/60">Narration language</label>
               <MuseumSelect
                 value={language}
-                onChange={setLanguage}
+                onChange={handleLanguageChange}
                 className="min-w-44 rounded-full border border-white/10 bg-white/5 text-sm text-white"
                 options={[
                   { value: 'en-US', label: 'English' },
                   { value: 'hi-IN', label: 'Hindi' },
-                  { value: 'te-IN', label: 'Telugu' },
                 ]}
               />
+              {!narration.hasVoiceForLanguage && language !== 'en-US' ? (
+                <p className="mt-2 w-full text-xs text-museum-danger/80">
+                  No Hindi voice found. Install the language pack in Windows Settings → Time &amp; Language → Language &amp; region.
+                </p>
+              ) : null}
             </div>
             {artwork.sourceUrl ? (
               <p className="mt-6 text-sm text-white/55">

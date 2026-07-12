@@ -13,6 +13,7 @@ export function AudioGuidePage() {
   const { data } = useMuseumOverview();
   const [selectedId, setSelectedId] = useState('surya-mask');
   const [language, setLanguage] = useState('en-US');
+  const handleLanguageChange = (lang: string) => { narration.stop(); setLanguage(lang); };
 
   const selectedArtwork = useMemo(
     () => data?.artworks.find((artwork) => artwork.id === selectedId) ?? data?.artworks[0],
@@ -63,15 +64,18 @@ export function AudioGuidePage() {
               <button type="button" onClick={narration.stop} className="rounded-full border border-white/10 bg-white/5 p-3 text-white"><HiOutlineStop /></button>
               <MuseumSelect
                 value={language}
-                onChange={setLanguage}
+                onChange={handleLanguageChange}
                 className="min-w-40 rounded-full border border-white/10 bg-white/5 text-sm text-white"
                 options={[
                   { value: 'en-US', label: 'English' },
                   { value: 'hi-IN', label: 'Hindi' },
-                  { value: 'ta-IN', label: 'Tamil' },
-                  { value: 'te-IN', label: 'Telugu' },
                 ]}
               />
+              {!narration.hasVoiceForLanguage && language !== 'en-US' ? (
+                <p className="w-full text-xs text-museum-danger/80">
+                  No Hindi voice found on this device. Install the language pack in your OS settings to enable narration.
+                </p>
+              ) : null}
               <input type="range" min="0.75" max="1.5" step="0.05" value={narration.rate} onChange={(event) => narration.setRate(Number(event.target.value))} />
             </div>
             <p className="mt-5 text-sm text-white/58">Captions are shown directly in the transcription panel above. Background ambience and produced voice tracks can be swapped in later without changing the UI contract.</p>
