@@ -105,12 +105,6 @@ export function ArtworkVisual({ title, artist, palette, imageUrl, className }: A
           }}
         />
       ) : null}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/72 via-black/18 to-transparent" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.24),transparent_0_35%),radial-gradient(circle_at_80%_30%,rgba(255,255,255,0.12),transparent_0_30%)]" />
-      <div className="absolute inset-x-8 bottom-8 rounded-[1.5rem] border border-white/15 bg-black/18 p-4 backdrop-blur-md">
-        <p className="font-display text-2xl text-white">{title}</p>
-        <p className="mt-1 text-sm uppercase tracking-[0.22em] text-white/70">{artist}</p>
-      </div>
     </div>
   );
 }

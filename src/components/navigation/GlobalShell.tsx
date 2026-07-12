@@ -1,6 +1,8 @@
 import { PropsWithChildren, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { HiOutlineMagnifyingGlass, HiOutlineSparkles } from 'react-icons/hi2';
+import { FaGithub, FaLinkedin } from 'react-icons/fa6';
+import { HiOutlineEnvelope } from 'react-icons/hi2';
 
 import { AccessibilityDialog } from '@/dialogs/AccessibilityDialog';
 const navItems = [
@@ -77,6 +79,39 @@ export function GlobalShell({ children }: PropsWithChildren) {
           <div className="text-sm leading-7 text-white/60">
             <p className="uppercase tracking-[0.18em] text-white/55">Current build</p>
             <p className="mt-3">Includes immersive landing, interactive lobby, collection discovery, voice-assisted search, narration, and saved favorites.</p>
+          </div>
+        </div>
+        <div className="mx-auto max-w-7xl px-6 pb-8">
+          <div className="inline-flex items-center gap-3 rounded-full border border-museum-gold/40 bg-museum-gold/15 px-4 py-2 shadow-[0_0_24px_rgba(212,175,55,0.2)]">
+            <p className="text-xs uppercase tracking-[0.18em] text-museum-gold">Created by - Bura Rithvik Kumar</p>
+            <div className="h-4 w-px bg-museum-gold/35" aria-hidden="true" />
+            <div className="inline-flex items-center gap-2 text-museum-gold">
+              <a
+                href="https://www.linkedin.com/in/burarithvikkumar/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="LinkedIn"
+                className="rounded-full p-1 transition hover:bg-museum-gold/20"
+              >
+                <FaLinkedin className="text-sm" />
+              </a>
+              <a
+                href="https://github.com/rithvik4"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="GitHub"
+                className="rounded-full p-1 transition hover:bg-museum-gold/20"
+              >
+                <FaGithub className="text-sm" />
+              </a>
+              <a
+                href="mailto:bura.rithvik@gmail.com"
+                aria-label="Email"
+                className="rounded-full p-1 transition hover:bg-museum-gold/20"
+              >
+                <HiOutlineEnvelope className="text-sm" />
+              </a>
+            </div>
           </div>
         </div>
       </footer>

@@ -1,4 +1,5 @@
 import type { Artist, Artwork, CollectionRail, MuseumEvent, MuseumOverview, MuseumRoom, MuseumStat, TimelineEra } from '@/types/museum';
+import metRecords from '@/data/metRecords.json';
 
 const rooms: MuseumRoom[] = [
   {
@@ -65,80 +66,22 @@ const rooms: MuseumRoom[] = [
 
 const artists: Artist[] = [
   {
-    id: 'amara-nasir',
-    name: 'Anaya Nataraj',
+    id: 'unknown-artist',
+    name: 'Unknown Artist',
     country: 'India',
-    period: 'Ancient',
-    biography: 'A fictional temple artisan drawing from stone carving, ritual symbolism, and sacred architecture across early India.',
-    specialties: ['stone carving', 'ritual symbolism', 'sacred iconography'],
+    period: 'Various periods',
+    biography: 'Artist attribution is not available in the source museum record for these works.',
+    specialties: ['Sculpture', 'Metalwork', 'Historical works'],
   },
   {
-    id: 'elena-fiora',
-    name: 'Ira Mukherjee',
+    id: 'artist-dasoja-of-balligrama',
+    name: 'Dasoja of Balligrama',
     country: 'India',
-    period: 'Classical',
-    biography: 'A fictional court painter whose work blends miniature precision, narrative perspective, and manuscript illumination.',
-    specialties: ['miniature painting', 'portraiture', 'manuscript studies'],
-  },
-  {
-    id: 'sora-mercier',
-    name: 'Samar Virk',
-    country: 'India',
-    period: 'Modern',
-    biography: 'An imagined modern Indian painter known for luminous fields shaped by city memory and textile color.',
-    specialties: ['abstraction', 'mixed media', 'color field'],
-  },
-  {
-    id: 'nina-ibarra',
-    name: 'Nidhi Batra',
-    country: 'India',
-    period: 'Contemporary',
-    biography: 'A documentary photographer focused on migration corridors, monsoon weather, and collective memory in India.',
-    specialties: ['photography', 'archival print', 'documentary'],
-  },
-  {
-    id: 'arjun-vale',
-    name: 'Arjun Vale',
-    country: 'India',
-    period: 'Future',
-    biography: 'A speculative digital artist combining procedural systems with cultural cartography.',
-    specialties: ['creative coding', 'real-time rendering', 'interactive installation'],
-  },
-  {
-    id: 'asha-raina',
-    name: 'Asha Raina',
-    country: 'India',
-    period: 'Ancient',
-    biography: 'A fictional painter of temple panels, floral studies, and devotional ornament drawn from Indian visual traditions.',
-    specialties: ['pichhwai', 'temple painting', 'ornament'],
-  },
-  {
-    id: 'devika-sen',
-    name: 'Devika Sen',
-    country: 'India',
-    period: 'Medieval',
-    biography: 'A fictional manuscript artist focused on courtly narrative, paper luminosity, and regional linework.',
-    specialties: ['manuscript painting', 'miniature', 'ink and gold'],
-  },
-  {
-    id: 'kabir-rai',
-    name: 'Kabir Rai',
-    country: 'India',
-    period: 'Modern',
-    biography: 'A fictional modern Indian colorist working between textile memory, city rhythm, and formal abstraction.',
-    specialties: ['textile studies', 'urban color', 'mixed media'],
-  },
-  {
-    id: 'meera-iyer',
-    name: 'Meera Iyer',
-    country: 'India',
-    period: 'Contemporary',
-    biography: 'A fictional contemporary artist whose work explores memory, ritual, and digital ornament.',
-    specialties: ['contemporary painting', 'pattern studies', 'digital ornament'],
+    period: 'Hoysala period',
+    biography: 'Documented sculptor credited in the source record for Standing Vishnu as Keshava.',
+    specialties: ['Sculpture', 'Stone carving'],
   },
 ];
-
-const indianArtists = artists.filter((artist) => artist.country === 'India');
 
 type IndianArtworkRecord = {
   id: number;
@@ -156,6 +99,42 @@ type IndianArtworkRecord = {
 
 function cleanText(value: string) {
   return value.replace(/\s+/g, ' ').trim();
+}
+
+let cachedIndianSourceRecords: IndianArtworkRecord[] | null = null;
+
+function getIndianArtworkSourceRecords() {
+  if (cachedIndianSourceRecords) {
+    return cachedIndianSourceRecords;
+  }
+
+  const byId = new Map<number, IndianArtworkRecord>();
+
+  const addRecord = (raw: IndianArtworkRecord) => {
+    if (!raw?.id || !raw?.title || !raw?.imageUrl || !raw?.sourceUrl) {
+      return;
+    }
+
+    byId.set(raw.id, {
+      id: raw.id,
+      title: cleanText(raw.title),
+      artist: cleanText(raw.artist || ''),
+      year: cleanText(raw.year || 'Date unknown'),
+      country: cleanText(raw.country || 'India'),
+      culture: cleanText(raw.culture || 'India'),
+      medium: cleanText(raw.medium || 'Unknown medium'),
+      classification: cleanText(raw.classification || 'Indian art'),
+      period: cleanText(raw.period || ''),
+      imageUrl: raw.imageUrl.trim(),
+      sourceUrl: raw.sourceUrl.trim(),
+    });
+  };
+
+  indianArtworkRecords.forEach(addRecord);
+  (metRecords as IndianArtworkRecord[]).forEach(addRecord);
+  cachedIndianSourceRecords = Array.from(byId.values());
+
+  return cachedIndianSourceRecords;
 }
 
 function formatArtworkNarration(artwork: {
@@ -182,8 +161,8 @@ function formatArtworkNarration(artwork: {
 }
 
 function makeIndianArtwork(index: number): Artwork {
-  const record = indianArtworkRecords[index % indianArtworkRecords.length];
-  const artist = indianArtists[index % indianArtists.length];
+  const sourceRecords = getIndianArtworkSourceRecords();
+  const record = sourceRecords[index % sourceRecords.length];
   const roomSequence = ['ancientIndia', 'courtlyIndia', 'modernIndia', 'peopleIndia', 'digitalIndia'] as const;
   const paletteOptions: Array<[string, string]> = [
     ['#D4AF37', '#4E3421'],
@@ -195,24 +174,25 @@ function makeIndianArtwork(index: number): Artwork {
   ];
   const palette = paletteOptions[index % paletteOptions.length];
   const roomId = roomSequence[index % roomSequence.length];
-  const period = record.period || (index % 2 === 0 ? 'Ancient' : 'Medieval');
+  const period = cleanText(record.period || 'Historical Indian Art');
   const collectionOptions = ['Featured', 'Hidden Treasures', 'Most Viewed', 'Editors Choice', 'Trending', 'Recently Added'];
   const collection = collectionOptions[index % collectionOptions.length];
   const imageUrl = record.imageUrl;
   const title = cleanText(record.title);
-  const artworkArtist = cleanText(record.artist || artist.name || 'Unknown artist');
+  const artworkArtist = cleanText(record.artist || 'Unknown Artist');
+  const artistId = artworkArtist.toLowerCase() === 'unknown artist' ? 'unknown-artist' : `artist-${artworkArtist.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`;
   const country = cleanText(record.country || 'India');
   const culture = cleanText(record.culture || 'India');
   const style = cleanText(record.classification || 'Indian art');
   const medium = cleanText(record.medium || 'Unknown medium');
   const year = cleanText(record.year || 'Date unknown');
-  const totalIndian = indianArtworkRecords.length;
+  const totalIndian = sourceRecords.length;
   const relatedIds = [
     `indian-${((index + 1) % totalIndian) + 1}`,
     `indian-${((index + 2) % totalIndian) + 1}`,
   ];
-  const historicalImportance = `${title} reflects ${culture} visual traditions and broadens the museum's South Asian representation with a documented work from The Met.`;
-  const description = `${title} is a documented object from The Metropolitan Museum of Art collection, included to strengthen Indian art coverage with accurate object metadata.`;
+  const historicalImportance = `${title} is a documented ${style.toLowerCase()} from ${culture}, dated ${year}.`;
+  const description = `${title} is cataloged by The Metropolitan Museum of Art (Object ${record.id}). Medium: ${medium}. Culture: ${culture}.`;
   const narration = formatArtworkNarration(
     {
       title,
@@ -232,7 +212,7 @@ function makeIndianArtwork(index: number): Artwork {
     title,
     imageUrl,
     thumbnailUrl: imageUrl,
-    artistId: artist.id,
+    artistId,
     artist: artworkArtist,
     year,
     country,
@@ -254,6 +234,7 @@ function makeIndianArtwork(index: number): Artwork {
     ],
     facts: [
       { label: 'Object ID', value: String(record.id) },
+      { label: 'Date', value: year },
       { label: 'Culture', value: culture },
       { label: 'Artist', value: artworkArtist },
       { label: 'Medium', value: medium },
@@ -1045,17 +1026,10 @@ function generateGalleryArtworks(baseIds: string[]) {
   return generated;
 }
 
-const generatedArtworks = generateGalleryArtworks(baseArtworks.map((artwork) => artwork.id));
-const indianArtworks = Array.from({ length: indianArtworkRecords.length }, (_, index) => makeIndianArtwork(index));
+const indianArtworks = Array.from({ length: getIndianArtworkSourceRecords().length }, (_, index) => makeIndianArtwork(index));
 
 const artworks: Artwork[] = [
   ...indianArtworks,
-  ...baseArtworks.map((artwork) => ({
-    ...artwork,
-    imageUrl: artworkImagePool[baseArtworks.indexOf(artwork) % artworkImagePool.length],
-    thumbnailUrl: artworkImagePool[baseArtworks.indexOf(artwork) % artworkImagePool.length],
-  })),
-  ...generatedArtworks,
 ].map((artwork) => ({
   ...artwork,
   country: 'India',
@@ -1072,12 +1046,12 @@ const timeline: TimelineEra[] = [
 ];
 
 const collections: CollectionRail[] = [
-  { id: 'featured', name: 'Featured', description: 'Signature works introducing the Bharat museum tone.', artworkIds: ['surya-mask', 'raj-atlas', 'nakshatra-cartography'] },
-  { id: 'trending', name: 'Trending', description: 'Works drawing the strongest engagement this week.', artworkIds: ['sutra-bloom', 'monsoon-horizon', 'royal-observer'] },
-  { id: 'most-viewed', name: 'Most Viewed', description: 'Audience favorites across all rooms.', artworkIds: ['royal-observer', 'sutra-bloom', 'surya-mask'] },
-  { id: 'hidden-treasures', name: 'Hidden Treasures', description: 'Undiscovered works with strong narrative depth.', artworkIds: ['ganga-ledger', 'ghat-echo', 'bazaar-trace'] },
-  { id: 'kids', name: 'Kids Collection', description: 'Accessible works for family exploration.', artworkIds: ['ghat-echo', 'sutra-bloom'] },
-  { id: 'vr', name: 'VR Collection', description: 'Immersive, spatial, and responsive pieces.', artworkIds: ['sutra-bloom', 'nakshatra-cartography'] },
+  { id: 'featured', name: 'Featured', description: 'Signature documented works introducing the Bharat museum tone.', artworkIds: ['indian-1', 'indian-3', 'indian-6', 'indian-9'] },
+  { id: 'trending', name: 'Trending', description: 'Documented highlights currently drawing strong engagement.', artworkIds: ['indian-2', 'indian-10', 'indian-15', 'indian-20'] },
+  { id: 'most-viewed', name: 'Most Viewed', description: 'Audience favorites across all rooms.', artworkIds: ['indian-3', 'indian-7', 'indian-11', 'indian-18'] },
+  { id: 'hidden-treasures', name: 'Hidden Treasures', description: 'Lesser-known documented works with rich historical context.', artworkIds: ['indian-8', 'indian-12', 'indian-16', 'indian-24'] },
+  { id: 'kids', name: 'Kids Collection', description: 'Accessible works for family exploration.', artworkIds: ['indian-5', 'indian-14', 'indian-21'] },
+  { id: 'vr', name: 'VR Collection', description: 'Immersive-ready works suitable for close digital viewing.', artworkIds: ['indian-4', 'indian-13', 'indian-19', 'indian-23'] },
 ];
 
 const events: MuseumEvent[] = [

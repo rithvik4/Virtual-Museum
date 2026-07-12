@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { GlassCard } from '@/cards/GlassCard';
 import { ArtworkVisual } from '@/common/ArtworkVisual';
 import { SectionHeading } from '@/common/SectionHeading';
@@ -12,6 +12,7 @@ import { useProfileStore } from '@/store/profileStore';
 
 export function MuseumPage() {
   const { data } = useMuseumOverview();
+  const [searchParams] = useSearchParams();
   const [activeRoomId, setActiveRoomId] = useState('ancientIndia');
   const [immersiveMode, setImmersiveMode] = useState(false);
   const markRoomVisited = useProfileStore((state) => state.markRoomVisited);
@@ -24,6 +25,23 @@ export function MuseumPage() {
   const roomCollectionCount = new Set(activeRoomWorks.map((artwork) => artwork.collection)).size;
   const roomAveragePopularity =
     activeRoomWorks.length > 0 ? Math.round(activeRoomWorks.reduce((sum, artwork) => sum + artwork.popularity, 0) / activeRoomWorks.length) : 0;
+  const activeRoomColor = activeRoom?.color ?? '#D4AF37';
+
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+
+    const requestedRoomId = searchParams.get('room');
+    if (!requestedRoomId) {
+      return;
+    }
+
+    const roomExists = data.rooms.some((room) => room.id === requestedRoomId);
+    if (roomExists && requestedRoomId !== activeRoomId) {
+      setActiveRoomId(requestedRoomId);
+    }
+  }, [activeRoomId, data, searchParams]);
 
   useEffect(() => {
     if (activeRoomId) {
@@ -133,7 +151,14 @@ export function MuseumPage() {
                   <div className="mt-5 flex flex-wrap gap-2">
                     <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.16em] text-white/70">{roomCollectionCount} Collections</span>
                     <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.16em] text-white/70">{activeRoomWorks.length} Works</span>
-                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.16em] text-white/70">Color Tone {activeRoom?.color}</span>
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.16em] text-white/70">
+                      Color Tone
+                      <span
+                        className="h-3 w-3 rounded-full border border-white/30"
+                        style={{ backgroundColor: activeRoomColor }}
+                        aria-label={`Room color ${activeRoomColor}`}
+                      />
+                    </span>
                   </div>
                   <div className="mt-6 grid gap-3 text-sm text-white/65">
                     <p><span className="text-white">Lighting:</span> {activeRoom?.lighting}</p>
